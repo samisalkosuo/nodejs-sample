@@ -119,12 +119,12 @@ helm list -a --tls |grep ${__app_name}
 rc=$?
 if [[ $rc == 0 ]]; then
   #deployment exists
-  echo "Deployment exists.. upgrading."
-  helm upgrade ${__app_name} local-charts/${__app_name} --tls
-else
-  #deployment does not exist, install
-  helm install --name ${__app_name} local-charts/${__app_name} --tls
+  echo "Deployment exists.. deleting."
+  helm delete --purge ${__app_name} --tls 
 fi
+
+helm install --name ${__app_name} local-charts/${__app_name} --tls
+
 set -e
 
 echo "Application should be deployed: https://${__prod_host_name}."
