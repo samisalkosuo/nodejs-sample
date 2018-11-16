@@ -9,7 +9,7 @@ __docker_image_name=${APP_NAME}:${__ver}
 
 #Deploy Daytrader app to ICP using Helm chart
 
-__image_name=$1
+__image_name=$__docker_image_name
 
 source build.env
 source jenkins/variables.sh

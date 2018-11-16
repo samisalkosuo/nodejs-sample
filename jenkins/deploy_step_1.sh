@@ -9,7 +9,7 @@ __docker_image_name=${APP_NAME}:${__ver}
 #Deploy  app to ICP
 #Step 1 push image
 
-__image_name=$1
+__image_name=$__docker_image_name
 
 #echo "CAM_USER: ${CAM_USER}"
 #echo "CAM_PASSWORD: ${CAM_PASSWORD}"
