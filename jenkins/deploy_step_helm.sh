@@ -92,7 +92,7 @@ fi
 set -e
 
 echo "Install Helm chart.."
-cd helm
+cd jenkins/helm
 #modify Helm chart
 changeString ${__app_name}/Chart.yaml "||VERSION||" ${__tag_name}
 changeString ${__app_name}/Chart.yaml "||HELM_DESCRIPTION||" $HELM_DESCRIPTION
@@ -126,4 +126,4 @@ set -e
 
 echo "Application should be deployed: https://${__prod_host_name}."
 
-echo https://${__prod_host_name} > ../ICP_APP_URL
+echo https://${__prod_host_name} > ../../ICP_APP_URL
