@@ -60,7 +60,7 @@ var testRequests = 0
 
 app.get('/test', function(req, res) {
     testRequests = testRequests + 1
-    var now = Math.floor(new Date() / 1000);
+    var now = (new Date()).getTime();
     res.send('Test request succesfull: '+now);
 
 });
@@ -75,7 +75,7 @@ app.get('/metrics', function(req, res) {
     //https://prometheus.io/docs/instrumenting/exposition_formats/
     var metricsData='# HELP test_requests_total Total number of HTTP requests to /test endpoint.\n\
 # TYPE test_requests_total counter\n\
-test_requests_total{method="get",code="200"} '+testRequests+' ' + (new Date()) +' \n \
+test_requests_total{method="get",code="200"} '+testRequests+' ' + (new Date()).getTime() +' \n \
 ';
 
     res.writeHead(200, {"Content-Type": "text/plain; version=0.0.4"});
