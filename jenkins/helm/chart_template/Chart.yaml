@@ -1,0 +1,4 @@
+apiVersion: v1
+description: ||HELM_DESCRIPTION||
+name: ||APP_NAME||
+version: ||VERSION||

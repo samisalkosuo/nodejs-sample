@@ -1,0 +1,92 @@
+/* style.css
+ * This file provides css styles.
+ */
+
+#heading {
+    position: relative;
+}
+
+#footer {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+}
+
+#footerControls {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    right: 10px;
+    height: 30px;
+}
+
+#scaleSlider {
+    width: 200px;
+}
+
+#feedback {
+    overflow: scroll;
+    border: none;
+}
+
+#content {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 00px;
+}
+
+#uploader {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0)
+}
+
+#feedback {
+    position: absolute;
+    top: 280px;
+    right: 0px;
+    left: 0px;
+    bottom: 0px;
+    z-index: -100;
+    padding: 20px;
+}
+
+#render-parent {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    bottom: 10px;
+    border: none;
+    overflow: scroll;
+}
+
+#render {
+    position: absolute;
+}
+
+#render img {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+
+#render table {
+    
+    top: 0px;
+    left: 0px;
+}
+
+table {}
+
+table tr td {
+    border: 1px dashed rgba(0, 0, 0, 0.25);
+    text-align: center;
+    font-size: 25px;
+}

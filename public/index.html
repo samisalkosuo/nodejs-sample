@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>IBM Watson Visual Recognition - Default Classifier App</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="./scripts/dropzone.js"></script>
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <script src="./scripts/client.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="./stylesheets/style.css">
+    <link rel="stylesheet" href="https://rawgit.com/enyo/dropzone/master/dist/dropzone.css">
+    
+</head>
+
+<body onload="setAPIKey();">
+
+<h1 id="heading">
+IBM Watson Visual Recognition - Default Classifier App
+</h1>
+<p>Watson Visual Recognition API KEY: <input id="watsonApiKey" value="" onchange="document.getElementById('watsonApiKeyForm').value=document.getElementById('watsonApiKey').value;setCookie('watsonApiKey',document.getElementById('watsonApiKey').value,365);" type="password" />
+<br/>
+<a href="https://www.ibm.com/watson/services/visual-recognition/" target="_blank">To get API key, follow this link and find "Get Started Free."</a>
+</p>
+<div><small>
+Powered by <a href="https://www.ibm.com/watson/services/visual-recognition/" target="_blank">IBM Watson Visual Recognition</a>, <a href="http://bluemix.net/" target="_blank">IBM Cloud</a> and <a href="https://www.ibm.com/devops/method/category/tools/" target="_blank">DevOps Toolchains</a>.
+<br/><br/>
+Sources are here: <a href="https://github.com/samisalkosuo/visualrec-default-app" target="_blank">https://github.com/samisalkosuo/visualrec-default-app</a>
+<br/><br/>
+<a href="https://console.bluemix.net/docs/services/visual-recognition/tutorial-custom-classifier.html#creating-a-custom-classifier" target="_blank">You can also create custom classifiers for your own use case.</a> Example use cases include <a href="https://github.com/IBM-Bluemix/Visual-Recognition-Tile-Localization" target="_blank">detecting rust in bridges</a>, finding out free parking spaces or detecting humans in restricted areas.
+</small></div>
+
+<div id="content">        
+    <div class="dropContainer">
+        <form action="/file-upload" class="dropzone" id="uploader" enctype="multipart/form-data">
+            <div class="dz-message" data-dz-message><span>Click here to upload or take an image and let IBM Watson tell you the contents.</span></div>
+                <input name="tileWidth" value="200" type="hidden" step="1" />
+                <input name="tileHeight" value="200" type="hidden" step="1" />
+                <input id="watsonApiKeyForm" name="watsonApiKey" value="" type="hidden" step="1" />
+                <div class="fallback">
+                    <input name="file" type="file" />
+                    <input type="submit" value="Upload" />
+                </div>
+        </form>
+    </div>
+    <div id="feedback"></div>
+</div>
+
+<div id="render-parent" class="hidden">
+    <div id="render" class="container-fluid"></div>
+</div>
+
+</body>
+
+</html>

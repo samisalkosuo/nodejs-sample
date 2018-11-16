@@ -1,0 +1,6 @@
+Application URL:
+{{- if .Values.ingress.enabled }}
+{{- range .Values.ingress.hosts }}
+  https://{{ . }}
+{{- end }}
+{{- end }}
