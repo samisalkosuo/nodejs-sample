@@ -1,4 +1,4 @@
 apiVersion: v1
-description: ||HELM_DESCRIPTION||
+description: Helm chart description
 name: ||APP_NAME||
 version: ||VERSION||
