@@ -7,7 +7,7 @@ __ver=$VERSION
 __docker_image_name=${APP_NAME}:${__ver}
 
 
-#Deploy Daytrader app to ICP using Helm chart
+#Deploy app to ICP using Helm chart
 
 __image_name=$__docker_image_name
 
@@ -23,6 +23,9 @@ cloudctl login -a ${ICP_URL} --skip-ssl-validation -u ${CAM_USER} -p ${CAM_PASSW
 function changeString {
     if [[ $# -ne 3 ]]; then
         echo "$FUNCNAME ERROR: Wrong number of arguments. Requires FILE FROMSTRING TOSTRING."
+        echo "Arg1: " $1
+        echo "Arg2: " $2
+        echo "Arg3: " $3
         return 1
     fi
 
@@ -78,14 +81,14 @@ echo "production deployment"
 __prod_host_name=$HOST_NAME
 
 #create cert and secret
-__app_prod_secret_name=daytrader-secret
+__app_prod_secret_name=${__app_name}-secret
 set +e
 kubectl get secret |grep ${__app_prod_secret_name}
 rc=$?
 if [[ $rc != 0 ]]; then
   # create app prod secret
   echo "Creating self-signed certificate"
-  __tls_name=daytrader-tls
+  __tls_name=${__app_name}-tls
   openssl req -x509 -nodes -days 7000 -newkey rsa:2048 -keyout ${__tls_name}.key -out ${__tls_name}.crt -subj "/CN=${__prod_host_name}"
   kubectl create secret tls ${__app_prod_secret_name} --key ${__tls_name}.key --cert ${__tls_name}.crt
 fi
