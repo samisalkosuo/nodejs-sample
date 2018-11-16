@@ -56,6 +56,38 @@ app.use('/uploads', express.static(rootDir));
 // get the app environment from Cloud Foundry
 var appEnv = cfenv.getAppEnv();
 
+var testRequests = 0
+
+app.get('/test', function(req, res) {
+    testRequests = testRequests + 1
+    var now = Math.floor(new Date() / 1000);
+    res.send('Test request succesfull: '+now);
+
+});
+
+
+/*
+ICP/Prometheus Metrics endpoint
+*/
+app.get('/metrics', function(req, res) {
+
+    //generate metrics data 
+    //https://prometheus.io/docs/instrumenting/exposition_formats/
+    var metricsData='# HELP test_requests_total Total number of HTTP requests to /test endpoint.\n\
+# TYPE test_requests_total counter\n\
+test_requests_total{method="get",code="200"} '+testRequests+' ' + (new Date()) +' \n \
+';
+
+    res.writeHead(200, {"Content-Type": "text/plain; version=0.0.4"});
+    res.write(metricsData, "utf-8");
+    res.end(); 
+
+    //res.setHeader('content-type', 'text/plain; version=0.0.4');
+    //res.send(metricsData)
+});
+
+
+
 /*
 Delete upload directory
 */
