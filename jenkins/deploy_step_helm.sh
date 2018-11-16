@@ -65,7 +65,7 @@ __app_name=${APP_NAME}
 docker login -u ${CAM_USER} -p ${CAM_PASSWORD} mycluster.icp:8500
 
 #tag name is latest version
-__tag_name=$(cat VERSION)
+__tag_name=$VERSION
 
 __icp_image_name=mycluster.icp:8500/default/${__app_name}:${__tag_name}
 docker tag ${__app_name}:latest ${__icp_image_name}
@@ -75,7 +75,7 @@ docker push ${__icp_image_name} || true
 
 echo "production deployment" 
 
-__prod_host_name=daytrader.${ICP_PROXY_IP}.nip.io
+__prod_host_name=$HOST_NAME
 
 #create cert and secret
 __app_prod_secret_name=daytrader-secret
@@ -95,10 +95,14 @@ echo "Install Helm chart.."
 cd helm
 #modify Helm chart
 changeString ${__app_name}/Chart.yaml "||VERSION||" ${__tag_name}
+changeString ${__app_name}/Chart.yaml "||HELM_DESCRIPTION||" $HELM_DESCRIPTION
+changeString ${__app_name}/Chart.yaml "||APP_NAME||" $APP_NAME
+changeString ${__app_name}/Chart.yaml "||APP_PORT||" $APP_PORT
 changeString ${__app_name}/values.yaml "||IMAGE_NAME||" mycluster.icp:8500/default/${__app_name}
 changeString ${__app_name}/values.yaml "||IMAGE_TAG||" ${__tag_name}
 changeString ${__app_name}/values.yaml "||HOST_NAME||" ${__prod_host_name}
-changeString ${__app_name}/templates/deployment.yaml "||DB_IP_ADDRESS||" ${DAYTRADER_DB_IP}
+changeString ${__app_name}/values.yaml "||IMAGE_PULL_POLICY||" $IMAGE_PULL_POLICY
+#changeString ${__app_name}/templates/deployment.yaml "||DB_IP_ADDRESS||" ${DAYTRADER_DB_IP}
 
 #package Helm
 helm package ${__app_name}
@@ -120,6 +124,6 @@ else
 fi
 set -e
 
-echo "Daytrader should be deployed: https://${__prod_host_name}."
+echo "Application should be deployed: https://${__prod_host_name}."
 
 echo https://${__prod_host_name} > ../ICP_APP_URL
