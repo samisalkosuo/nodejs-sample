@@ -6,7 +6,7 @@ WORKDIR "/app"
 
 COPY package.json .
 COPY app.js .
-COPY .env .
+COPY app.env ./.env
 COPY /public/ ./public/
 
 #app uses this port
