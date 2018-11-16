@@ -2,6 +2,11 @@
 
 set -o errexit
 
+source build.env
+__ver=$VERSION
+__docker_image_name=${APP_NAME}:${__ver}
+
+
 #Deploy Daytrader app to ICP using Helm chart
 
 __image_name=$1

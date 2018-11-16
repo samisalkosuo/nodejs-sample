@@ -28,15 +28,9 @@ pipeline {
       }
       steps {
         slackSend(message: "Pushing ${env.APP_NAME} Docker image to ICP...", channel: '#deployments', failOnError: true,color: '#0000FF')
-        sh '''__ver=$(cat VERSION)
-__docker_image_name=${APP_NAME}:${__ver}
-bash jenkins/deploy_step_1.sh ${__docker_image_name}
-'''
+        sh '''bash jenkins/deploy_step_1.sh ${__docker_image_name}'''
         slackSend(message: "Deploying Helm chart ${env.APP_NAME}...", channel: '#deployments', failOnError: true,color: '#0000FF')
-        sh '''__ver=$(cat VERSION)
-__docker_image_name=${APP_NAME}:${__ver}
-bash jenkins/deploy_step_helm.sh ${__docker_image_name}
-'''
+        sh '''bash jenkins/deploy_step_helm.sh ${__docker_image_name}'''
       }
     }
 
