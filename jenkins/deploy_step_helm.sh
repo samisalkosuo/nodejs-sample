@@ -98,7 +98,6 @@ echo "Install Helm chart.."
 cd jenkins/helm
 #modify Helm chart
 changeString ${__app_name}/Chart.yaml "||VERSION||" ${__tag_name}
-changeString ${__app_name}/Chart.yaml "||HELM_DESCRIPTION||" $HELM_DESCRIPTION
 changeString ${__app_name}/Chart.yaml "||APP_NAME||" $APP_NAME
 changeString ${__app_name}/Chart.yaml "||APP_PORT||" $APP_PORT
 changeString ${__app_name}/values.yaml "||IMAGE_NAME||" mycluster.icp:8500/default/${__app_name}

@@ -59,5 +59,8 @@ pipeline {
         }
     }
 
+ environment {
+    APP_NAME = 'nodejs-sample'
+  } 
 
 }
