@@ -14,7 +14,7 @@ __image_name=$1
 
 echo "Deploying ${__image_name} to ICP..."
 
-source jenkins/prod_icp/variables.sh
+source jenkins/variables.sh
 
 #login to icp
 docker login ${__docker_registry} -u $CAM_USER -p $CAM_PASSWORD

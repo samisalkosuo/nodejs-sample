@@ -18,7 +18,8 @@ pipeline {
       }
       steps {
         slackSend(message: "Building Docker image...", channel: '#deployments', failOnError: true,color: '#0000FF')
-        sh '''__ver=$(cat VERSION)
+        sh '''source build.env
+__ver=$VERSION
 __docker_image_name=${APP_NAME}:${__ver}
 docker build -t ${__docker_image_name} .
 docker tag ${__docker_image_name} ${APP_NAME}:latest'''
