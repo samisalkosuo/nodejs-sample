@@ -6,7 +6,8 @@ set -o errexit
 
 __image_name=$1
 
-source jenkins/prod_icp/variables.sh
+source build.env
+source jenkins/variables.sh
 
 #Deploy Daytrader using Helm chart
 

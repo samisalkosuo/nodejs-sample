@@ -2,7 +2,11 @@
 
 set -o errexit
 
-#Deploy Daytrader app to ICP
+source build.env
+__ver=$VERSION
+__docker_image_name=${APP_NAME}:${__ver}
+
+#Deploy  app to ICP
 #Step 1 push image
 
 __image_name=$1
