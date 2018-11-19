@@ -17,24 +17,3 @@ spec:
   selector:
     app: {{ template "app-name.name" . }}
     release: {{ .Release.Name }}
----
-apiVersion: v1
- kind: Service
- metadata:
-   annotations:
-     prometheus.io/scrape: true
-   labels:
-    app: {{ template "app-name.name" . }}
-    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
-   name: {{ template "app-name.fullname" . }}-metrics   
- spec:
-   ports:
-   - name: metrics
-     port: {{ .Values.service.externalPort }}
-     targetPort: {{ .Values.service.internalPort }}
-     protocol: TCP
-   selector:
-     app: {{ template "app-name.name" . }}
-   type: ClusterIP
