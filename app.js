@@ -73,7 +73,7 @@ app.get('/metrics', function(req, res) {
 
     //generate metrics data 
     //https://prometheus.io/docs/instrumenting/exposition_formats/
-    var timestamp = Math.round((new Date()).getTime() / 1000);
+    var timestamp = (new Date()).getTime();
     var metricsData='# HELP test_requests_total Total number of HTTP requests to /test endpoint.\n\
 # TYPE test_requests_total counter\n\
 test_requests_total{method="get",code="200"} '+testRequests+' ' + timestamp +' \n \
