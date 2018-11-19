@@ -6,11 +6,13 @@ WORKDIR "/app"
 
 COPY package.json .
 COPY app.js .
-COPY app.env ./.env
+COPY app.env ./app.env
 COPY /public/ ./public/
 
 #app uses this port
 EXPOSE 8080
+
+RUN source app.env
 
 RUN npm install
 

@@ -6,19 +6,12 @@
         "start": "node app.js"
     },
     "dependencies": {
-        "async": "^2.0.1",
         "cfenv": "1.0.x",
         "express": "4.13.x",
-        "express-fileupload": "0.0.5",
-        "gm": "^1.23.0",
-        "node-uuid": "^1.4.7",
-        "request": "^2.74.0",
-        "socket.io": "^1.4.8",
-        "watson-developer-cloud": "^2.4.6",
-        "fs-extra": "4.0.2",
-        "jimp":"0.2.28"
+        "uuid": "3.3.x",
+        "request": "^2.74.0"
     },
     "engines": {
-        "node": "4.x"
+        "node": "8.x"
     }
 }
