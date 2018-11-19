@@ -119,6 +119,7 @@ helm repo update
 set +e
 helm list -a --tls |grep ${__app_name}
 rc=$?
+set -e
 if [[ $rc == 0 ]]; then
   #deployment exists
   echo "Deployment exists.. deleting."
@@ -127,7 +128,6 @@ fi
 
 helm install --name ${__app_name} local-charts/${__app_name} --tls
 
-set -e
 
 echo "Application should be deployed: https://${__prod_host_name}."
 
