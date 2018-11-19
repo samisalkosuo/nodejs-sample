@@ -107,6 +107,8 @@ changeString ${__app_name}/values.yaml "||IMAGE_PULL_POLICY||" $IMAGE_PULL_POLIC
 changeString ${__app_name}/values.yaml "||APP_NAME||" $APP_NAME
 changeString ${__app_name}/values.yaml "||APP_PORT||" $APP_PORT
 
+#remove all tgz files
+rm -f *tgz
 #package Helm
 helm package ${__app_name}
 __helm_tar_file=$(ls *tgz)
