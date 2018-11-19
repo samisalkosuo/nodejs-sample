@@ -22,7 +22,7 @@ apiVersion: v1
  kind: Service
  metadata:
    annotations:
-     prometheus.io/scrape: 'true'
+     prometheus.io/scrape: true
    labels:
     app: {{ template "app-name.name" . }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
