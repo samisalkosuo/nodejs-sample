@@ -33,7 +33,7 @@ Grafana is used to as monitoring UI: https://<ICP_MASTER_IP>:8443/grafana/.
 
 Steps to create custom dashboard to show application custom metrics:
 
-- Create new dashboard and add Graph-panel.
+- Create new dashboard and add Graph-panel.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <img src="images/icp_grafana_1.png" alt="grafana_1" width="500"/>
 - New dashboard is created. Use drop down next to "Panel title" and select "Edit".
   <img src="images/icp_grafana_2.png" alt="edit panel" width="500"/>
