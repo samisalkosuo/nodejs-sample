@@ -2,8 +2,6 @@
 
 env.properties
 /uploads
-*.jpg
-*.png
 
 API_KEY.txt
 
