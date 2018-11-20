@@ -15,6 +15,7 @@ var completeAnalysisRequests = 0;
 var rootDir = './uploads';
 var MIN_TILE_SIZE = 200;
 
+console.log(process.env)
 var appName=process.env.APP_NAME;
 
 // cfenv provides access to your Cloud Foundry environment
@@ -36,12 +37,8 @@ app.get('/', function(req, res) {
 
     res.writeHead(200, {"Content-Type": "text/html"});
     res.write("<html><body>");
-    res.write(metricsData, "utf-8");
-    res.write("<html><body>");
-    res.send("<h2>App name: "+appName+"</h2>");
-
-    res.send('<a href="/test">Test link</a><br/>');
-
+    res.write("<h2>App name: "+appName+"</h2>");
+    res.write('<a href="/test">Test link</a><br/>');
     res.write("</body></html>");
     res.end(); 
 
@@ -71,7 +68,7 @@ app.get('/metrics', function(req, res) {
 ${appName}_test_requests_total '+testRequests+' ' + timestamp +' \n \
 ';
 
-var metricsData=metricsData+'# HELP ${appName}_root_requests_total Total number of HTTP requests to / endpoint.\n\
+    metricsData=metricsData+'# HELP ${appName}_root_requests_total Total number of HTTP requests to / endpoint.\n\
 # TYPE ${appName}_root_requests_total counter\n\
 ${appName}_root_requests_total '+rootRequests+' ' + timestamp +' \n \
 ';
