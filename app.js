@@ -83,19 +83,22 @@ ICP/Prometheus Metrics endpoint
 */
 app.get('/metrics', function(req, res) {
 
+    // metrics label naming
+    // https://prometheus.io/docs/practices/naming/
+
     //generate metrics data 
     //https://prometheus.io/docs/instrumenting/exposition_formats/
-    
+    var metric_prefix=appName.replace("/[^a-zA-Z0-9]+/g","_");
     var timestamp = (new Date()).getTime();    
     var metricsData='# HELP {0}_test_requests_total Total number of HTTP requests to /test endpoint.\n\
 # TYPE {0}_test_requests_total counter\n\
 {0}_test_requests_total {1} {2}\n\n\
-'.format(appName,testRequests,timestamp);
+'.format(metric_prefix,testRequests,timestamp);
 
     metricsData=metricsData+'# HELP {0}_root_requests_total Total number of HTTP requests to / endpoint.\n\
 # TYPE {0}_root_requests_total counter\n\
 {0}_root_requests_total {1} {2}\n\n\
-'.format(appName,rootRequests,timestamp);
+'.format(metric_prefix,rootRequests,timestamp);
 
     res.writeHead(200, {"Content-Type": "text/plain; version=0.0.4"});
     res.write(metricsData, "utf-8");
