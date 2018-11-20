@@ -18,6 +18,7 @@ var MIN_TILE_SIZE = 200;
 console.log(process.env)
 var appName=process.env.APP_NAME;
 
+
 // cfenv provides access to your Cloud Foundry environment
 // for more info, see: https://www.npmjs.com/package/cfenv
 var cfenv = require('cfenv');
@@ -30,6 +31,17 @@ var appEnv = cfenv.getAppEnv();
 
 var rootRequests = 0
 var testRequests = 0
+
+
+String.prototype.format = function () {
+    var args = arguments;
+    return this.replace(/\{\{|\}\}|\{(\d+)\}/g, function (m, n) {
+      if (m == "{{") { return "{"; }
+      if (m == "}}") { return "}"; }
+      return args[n];
+    });
+  };
+
 
 app.get('/', function(req, res) {
     rootRequests = rootRequests + 1
@@ -46,6 +58,18 @@ app.get('/', function(req, res) {
 });
 
 
+app.get('/health', function(req, res) {
+
+    //do some status check and set status code
+    var statusCode=204//no content
+    
+    res.writeHead(statusCode);
+    res.end(); 
+
+
+});
+
+
 app.get('/test', function(req, res) {
     testRequests = testRequests + 1
     var now = (new Date()).getTime();
@@ -53,15 +77,6 @@ app.get('/test', function(req, res) {
 
 });
 
-
-String.prototype.format = function () {
-    var args = arguments;
-    return this.replace(/\{\{|\}\}|\{(\d+)\}/g, function (m, n) {
-      if (m == "{{") { return "{"; }
-      if (m == "}}") { return "}"; }
-      return args[n];
-    });
-  };
 
   /*
 ICP/Prometheus Metrics endpoint
