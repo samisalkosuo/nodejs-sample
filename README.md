@@ -21,16 +21,16 @@ Metrics data must be formatted so that Prometheus understands:
 
 - Metrics label naming: https://prometheus.io/docs/practices/naming/
 - Metrics data format: https://prometheus.io/docs/instrumenting/exposition_formats/
-- See [app.js](app.js) /metrics endpoint is an example of custom metrics.
+- See [app.js](app.js) /metrics endpoint as an example of custom metrics.
 - Metrics service must be added. See metrics-service of the application, [service.yaml](jenkins/helm/nodejs-sample/templates/service.yaml)
 
 ### Using custom metrics
 
 After application is deployed and if it has metrics service, ICP includes application metrics endpoint to Prometheus as a target. 
 
-All Prometheus targets are shown in the Prometheus UI: https://<ICP_MASTER_IP>:8443/prometheus/targets.
+All Prometheus targets are shown in the Prometheus UI: "https://<ICP_MASTER_IP>:8443/prometheus/targets".
 
-Grafana is used as monitoring UI: https://<ICP_MASTER_IP>:8443/grafana/.
+Grafana is used as monitoring UI: "https://<ICP_MASTER_IP>:8443/grafana/".
 
 Steps to create custom dashboard to show application custom metrics:
 
