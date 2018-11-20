@@ -1,4 +1,4 @@
-# nodejs sample application for ICP
+# Node.js sample application for IBM Cloud Private
 
 IBM Cloud Private sample application. 
 
