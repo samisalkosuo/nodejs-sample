@@ -15,21 +15,22 @@ See [app.js](app.js) for example of two metrics:
 - total requests to / 
 - total requests to /test
 
-[Documentation](https://www.ibm.com/support/knowledgecenter/SSBS6K_3.1.0/featured_applications/deploy_monitoring.html) describes the monitoring service. In order to use monitoring with application and custom metrics, /metrics endpoint must be implemented and that must return metrics data. See metrics-service, [service.yaml](jenkins/helm/nodejs-sample/templates/service.yaml).
+[ICP documentation](https://www.ibm.com/support/knowledgecenter/SSBS6K_3.1.0/featured_applications/deploy_monitoring.html) describes the monitoring service. In order to use application custom metrics, /metrics endpoint must be implemented and endpoint must return metrics data.
 
 Metrics data must be formatted so that Prometheus understands:
 
 - Metrics label naming: https://prometheus.io/docs/practices/naming/
 - Metrics data format: https://prometheus.io/docs/instrumenting/exposition_formats/
 - See [app.js](app.js) /metrics endpoint is an example of custom metrics.
+- Metrics service must be added. See metrics-service of the application, [service.yaml](jenkins/helm/nodejs-sample/templates/service.yaml)
 
 ### Using custom metrics
 
 After application is deployed and if it has metrics service, ICP includes application metrics endpoint to Prometheus as a target. 
 
-All Prometheus are shown in the Prometheus UI: https://<ICP_MASTER_IP>:8443/prometheus/targets.
+All Prometheus targets are shown in the Prometheus UI: https://<ICP_MASTER_IP>:8443/prometheus/targets.
 
-Grafana is used to as monitoring UI: https://<ICP_MASTER_IP>:8443/grafana/.
+Grafana is used as monitoring UI: https://<ICP_MASTER_IP>:8443/grafana/.
 
 Steps to create custom dashboard to show application custom metrics:
 
