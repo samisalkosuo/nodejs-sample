@@ -33,31 +33,22 @@ Grafana is used to as monitoring UI: https://<ICP_MASTER_IP>:8443/grafana/.
 
 Steps to create custom dashboard to show application custom metrics:
 
-- Create new dashboard and add Graph-panel.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="images/icp_grafana_1.png" alt="grafana_1" width="500"/>
+- Create new dashboard and add Graph-panel.
+  <img src="images/icp_grafana_1.png" alt="grafana_1" width="800"/>
 - New dashboard is created. Use drop down next to "Panel title" and select "Edit".
-  <img src="images/icp_grafana_2.png" alt="edit panel" width="500"/>
+  <img src="images/icp_grafana_2.png" alt="edit panel" width="800"/>
 - Select data source "Prometheus".
 - Enter "nodejs" to text field and you see the two custom metrics.
-  <img src="images/icp_grafana_3.png" alt="edit panel" width="500"/>
+  <img src="images/icp_grafana_3.png" alt="edit panel" width="800"/>
 - Select "nodejs_sample_root_requests_total"
 - Select "General" tab and change panel name to: "HTTP requests: /".
-  <img src="images/icp_grafana_4.png" alt="edit panel" width="500"/>
+  <img src="images/icp_grafana_4.png" alt="edit panel" width="800"/>
 - In the dashboard settings, change the dashboard name to: "Node.js Sample App Custom Metrics".
-  <img src="images/icp_grafana_5.png" alt="edit panel" width="500"/>
+  <img src="images/icp_grafana_5.png" alt="edit panel" width="800"/>
 - Click time selector (for example: "Last 6 hours") and change range and add refresh interval:
-  <img src="images/icp_grafana_6.png" alt="edit panel" width="500"/>
+  <img src="images/icp_grafana_6.png" alt="edit panel" width="800"/>
 - Add another panel for "HTTP requests: /test".
 - Save dashboard.
 - Open sample application many times using URLs: / and /test.
 - You see custom metrics in Grafana dashboard:
-  <img src="images/icp_grafana_7.png" alt="edit panel" width="500"/>
-
-  
-  
-  
-
-
-
-
-
+  <img src="images/icp_grafana_7.png" alt="edit panel" width="800"/>
