@@ -54,7 +54,16 @@ app.get('/test', function(req, res) {
 });
 
 
-/*
+String.prototype.format = function () {
+    var args = arguments;
+    return this.replace(/\{\{|\}\}|\{(\d+)\}/g, function (m, n) {
+      if (m == "{{") { return "{"; }
+      if (m == "}}") { return "}"; }
+      return args[n];
+    });
+  };
+
+  /*
 ICP/Prometheus Metrics endpoint
 */
 app.get('/metrics', function(req, res) {
@@ -63,15 +72,15 @@ app.get('/metrics', function(req, res) {
     //https://prometheus.io/docs/instrumenting/exposition_formats/
     
     var timestamp = (new Date()).getTime();    
-    var metricsData='# HELP ${appName}_test_requests_total Total number of HTTP requests to /test endpoint.\n\
-# TYPE ${appName}_test_requests_total counter\n\
-${appName}_test_requests_total '+testRequests+' ' + timestamp +' \n \
-';
+    var metricsData='# HELP {0}_test_requests_total Total number of HTTP requests to /test endpoint.\n\
+# TYPE {0}_test_requests_total counter\n\
+{0}_test_requests_total {1} {2}\n\n\
+'.format(appName,testRequests,timestamp);
 
-    metricsData=metricsData+'# HELP ${appName}_root_requests_total Total number of HTTP requests to / endpoint.\n\
-# TYPE ${appName}_root_requests_total counter\n\
-${appName}_root_requests_total '+rootRequests+' ' + timestamp +' \n \
-';
+    metricsData=metricsData+'# HELP ${0}_root_requests_total Total number of HTTP requests to / endpoint.\n\
+# TYPE ${0}_root_requests_total counter\n\
+${0}_root_requests_total {1} {2}\n\n\
+'.format(appName,rootRequests,timestamp);
 
     res.writeHead(200, {"Content-Type": "text/plain; version=0.0.4"});
     res.write(metricsData, "utf-8");
