@@ -8,6 +8,8 @@ This app uses the DevOps pipeline as described in [icp-cam-devops-demo](https://
 
 ICP includes monitoring service based on Prometheus and Grafana. Applications can use existing monitoring.
 
+Prometheus includes a lot of [client libraries](https://prometheus.io/docs/instrumenting/clientlibs/) that could be used. The purpose of this application is to implement custom metrics and no existing libraries are used.
+
 This app has /metrics endpoint to show custom metrics. 
 
 See [app.js](app.js) for example of two metrics:
