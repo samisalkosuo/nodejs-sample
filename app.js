@@ -79,7 +79,7 @@ app.get('/metrics', function(req, res) {
 
     metricsData=metricsData+'# HELP ${0}_root_requests_total Total number of HTTP requests to / endpoint.\n\
 # TYPE ${0}_root_requests_total counter\n\
-${0}_root_requests_total {1} {2}\n\n\
+{0}_root_requests_total {1} {2}\n\n\
 '.format(appName,rootRequests,timestamp);
 
     res.writeHead(200, {"Content-Type": "text/plain; version=0.0.4"});
