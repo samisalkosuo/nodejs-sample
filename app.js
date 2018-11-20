@@ -15,7 +15,8 @@ var completeAnalysisRequests = 0;
 var rootDir = './uploads';
 var MIN_TILE_SIZE = 200;
 
-console.log(process.env)
+//print env variables
+//console.log(process.env)
 var appName=process.env.APP_NAME;
 
 
@@ -88,7 +89,7 @@ app.get('/metrics', function(req, res) {
 
     //generate metrics data 
     //https://prometheus.io/docs/instrumenting/exposition_formats/
-    var metric_prefix=appName.replace("/[^a-zA-Z0-9]+/g","_");
+    var metric_prefix=appName.replace(/[^a-zA-Z0-9]+/g,"_");
     var timestamp = (new Date()).getTime();    
     var metricsData='# HELP {0}_test_requests_total Total number of HTTP requests to /test endpoint.\n\
 # TYPE {0}_test_requests_total counter\n\
