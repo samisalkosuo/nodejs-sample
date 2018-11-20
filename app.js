@@ -92,8 +92,8 @@ app.get('/metrics', function(req, res) {
 {0}_test_requests_total {1} {2}\n\n\
 '.format(appName,testRequests,timestamp);
 
-    metricsData=metricsData+'# HELP ${0}_root_requests_total Total number of HTTP requests to / endpoint.\n\
-# TYPE ${0}_root_requests_total counter\n\
+    metricsData=metricsData+'# HELP {0}_root_requests_total Total number of HTTP requests to / endpoint.\n\
+# TYPE {0}_root_requests_total counter\n\
 {0}_root_requests_total {1} {2}\n\n\
 '.format(appName,rootRequests,timestamp);
 
