@@ -60,6 +60,9 @@ app.get('/', function(req, res) {
 
 
 app.get('/health', function(req, res) {
+    //Kubernetes health probe endpoint
+    //any code 200 >= code < 400 is success
+    //all other fail
 
     //do some status check and set status code
     var statusCode=204//no content
@@ -79,8 +82,8 @@ app.get('/test', function(req, res) {
 });
 
 
-  /*
-ICP/Prometheus Metrics endpoint
+/*
+ICP/Prometheus custom metrics endpoint
 */
 app.get('/metrics', function(req, res) {
 
@@ -89,6 +92,7 @@ app.get('/metrics', function(req, res) {
 
     //generate metrics data 
     //https://prometheus.io/docs/instrumenting/exposition_formats/
+
     var metric_prefix=appName.replace(/[^a-zA-Z0-9]+/g,"_");
     var timestamp = (new Date()).getTime();    
     var metricsData='# HELP {0}_test_requests_total Total number of HTTP requests to /test endpoint.\n\
@@ -105,8 +109,6 @@ app.get('/metrics', function(req, res) {
     res.write(metricsData, "utf-8");
     res.end(); 
 
-    //res.setHeader('content-type', 'text/plain; version=0.0.4');
-    //res.send(metricsData)
 });
 
 var http = require('http').Server(app);
