@@ -18,20 +18,12 @@ process.on('SIGINT', handle);
 process.on('SIGTERM', handle);
 
 
-//print env variables
-//console.log(process.env)
-var appName=process.env.APP_NAME || "nodejs-sample";
-
-
-// cfenv provides access to your Cloud Foundry environment
-// for more info, see: https://www.npmjs.com/package/cfenv
-var cfenv = require('cfenv');
+var appName = process.env.APP_NAME || "nodejs-sample";
+var serverPort = process.env.APP_PORT || 6001;
+var DEBUG = process.env.DEBUG || false;
 
 // create a new express server
 var app = express();
-
-// get the app environment from Cloud Foundry
-var appEnv = cfenv.getAppEnv();
 
 var rootRequests = 0
 var testRequests = 0
@@ -58,7 +50,6 @@ app.get('/', function(req, res) {
     res.write("</body></html>");
     res.end(); 
 
-
 });
 
 
@@ -72,7 +63,6 @@ app.get('/health', function(req, res) {
     
     res.writeHead(statusCode);
     res.end(); 
-
 
 });
 
@@ -114,11 +104,16 @@ app.get('/metrics', function(req, res) {
 
 });
 
-var http = require('http').Server(app);
 
-// start the server
-http.listen(appEnv.port, function() {
-    // print a message when the server starts listening
-    console.log("server starting on " + appEnv.url);
+const server = app.listen(serverPort, "0.0.0.0", function() {
+    let host = server.address().address;
+    let port = server.address().port;
+    console.log('Server started and listening http://'+host+':'+port)
 });
 
+if (DEBUG == "true")
+{
+    server.on('connection', function(socket) {
+        console.log(`new connection, remote address: ${socket.remoteAddress}`);
+    });
+}

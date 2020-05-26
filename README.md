@@ -1,11 +1,14 @@
 # Node.js sample application
 
-Node.js sample application. Developed to be used with OpenShift and other Kubernetes platforms
+Node.js sample application. Developed to be used with OpenShift and other Kubernetes platforms, but can be used without Kubernetes.
 
 
 - Build locally:
   - `docker build -t nodejssample .`
-
+- Run locally in foreground:
+  - `docker run -it --rm --name nodejssample run -p 6001:6001 nodejssample`
+- Run locally in background:
+  - `docker run -d --name nodejssample -p 6001:6001 nodejssample`
 
 
 ## Old days
