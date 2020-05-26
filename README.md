@@ -1,8 +1,15 @@
-# Node.js sample application for IBM Cloud Private
+# Node.js sample application
 
-IBM Cloud Private sample application. 
+Node.js sample application. Developed to be used with OpenShift and other Kubernetes platforms
 
 This app uses the DevOps pipeline as described in [icp-cam-devops-demo](https://github.com/samisalkosuo/icp-cam-devops-demo), except that only ICP deployment is meant to be used.
+
+
+
+
+# 
+
+In the old days, the other Kubernetes platform was IBM Cloud Private.
 
 ## ICP monitoring
 

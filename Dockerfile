@@ -1,4 +1,4 @@
-FROM node:8
+FROM node:12.16.3-alpine3.10
 
 WORKDIR "/app"
 
@@ -6,15 +6,12 @@ WORKDIR "/app"
 
 COPY package.json .
 COPY app.js .
-COPY app.env ./app.env
 COPY /public/ ./public/
-COPY start_app.sh .
-RUN chmod 755 start_app.sh
 
 #app uses this port
 EXPOSE 6001
 
 RUN npm install
 
-CMD ["./start_app.sh"]
+CMD ["node","app.js"]
 #CMD ["/bin/bash"] 

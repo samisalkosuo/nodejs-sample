@@ -5,19 +5,22 @@
 // This application uses express as its web server
 // for more info, see: http://expressjs.com
 var express = require('express');
-var uuid = require('uuid');
-var request = require('request');
 
+// catch SIGINT and SIGTERM and exit
+// Using a single function to handle multiple signals
+function handle(signal) {
+    console.log(`Received ${signal}. Exiting...`);
+    process.exit(1)
+  }  
+//SIGINT is typically CTRL-C
+process.on('SIGINT', handle);
+//SIGTERM is sent to terminate process, for example docker stop sends SIGTERM
+process.on('SIGTERM', handle);
 
-var totalAnalysisRequests = 0;
-var completeAnalysisRequests = 0;
-
-var rootDir = './uploads';
-var MIN_TILE_SIZE = 200;
 
 //print env variables
 //console.log(process.env)
-var appName=process.env.APP_NAME;
+var appName=process.env.APP_NAME || "nodejs-sample";
 
 
 // cfenv provides access to your Cloud Foundry environment
