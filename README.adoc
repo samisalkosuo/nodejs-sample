@@ -13,11 +13,27 @@ Node.js sample application. Developed to be used with OpenShift and other Kubern
 
 == OpenShift
 
-One way to deploy this app to OpenShift is described here. We are going to use OCP feature to build container images from source. 
+One way to deploy this app to OpenShift is described here. We are going to use OCP feature, the Docker build, to build container images from source. 
 
-But why not S2I? IMHO, I have more control and I know exactly what is running when I use my own container image instead of letting OCP to select runtime based on the source. 
+But why not S2I? IMHO, I have more control and I know exactly what is running in my local development environment and in the server when I use my own container image. I can also deploy the same image to other Kubernetes/Docker environments easily.
 
 * Login to OCP and create a new project.
+* Create new app:
+** `oc new-app https://github.com/samisalkosuo/nodejs-sample  -l app=nodejs-sample`
+** _-l app=nodejs-sample_ adds label to deployment.
+* Watch pod status: `watch -n3 oc get pods`
+* Soon pod _nodejs-sample-1_ is running.
+* Creating new-app created also service:
+** `oc describe svc nodejs-sample`
+* But route is not created automatically. So let's create it:
+** `oc expose svc nodejs-sample`
+* Check the route URL:
+** `oc get route`
+* Go to that route URL.
+* Delete application:
+** `oc delete all -l app=nodejs-sample`
+** Deletes all resources that have the specified label.
+
 
 
 == Old days
