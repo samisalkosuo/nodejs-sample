@@ -2,6 +2,7 @@
 
 env.properties
 /uploads
+/old
 
 API_KEY.txt
 
