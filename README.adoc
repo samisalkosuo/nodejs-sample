@@ -34,6 +34,13 @@ But why not S2I? IMHO, I have more control and I know exactly what is running in
 ** `oc delete all -l app=nodejs-sample`
 ** Deletes all resources that have the specified label.
 
+=== Secure route
+
+Surprisingly, default OCP route is unsecured and does not accept TLS. This is the case at the time of writing and OCP version 4.3.19
+
+* https://docs.openshift.com/container-platform/4.3/networking/routes/secured-routes.html[OCP documentation] shows how to add custom certificate and use either edge or reencrypt.
+* Or you can use existing ingress certificate by patchin route to set termination to edge and redirect if using plain http:
+** `oc patch route nodejs-sample -p '{"spec":{"tls":{"insecureEdgeTerminationPolicy":"Redirect","termination":"edge"}}}'`
 
 
 == Old days
