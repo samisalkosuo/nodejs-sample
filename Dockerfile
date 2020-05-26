@@ -1,17 +1,17 @@
 FROM node:12.16.3-alpine3.10
 
+# Create user, change workdir and user
+RUN adduser --disabled-password --home /app user
 WORKDIR "/app"
+USER user
 
 #add app code
-
-COPY package.json .
-COPY app.js .
-COPY /public/ ./public/
+COPY src/ .
 
 #app uses this port
 EXPOSE 6001
 
+#install 
 RUN npm install
 
 CMD ["node","app.js"]
-#CMD ["/bin/bash"] 
