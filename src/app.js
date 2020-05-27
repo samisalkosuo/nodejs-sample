@@ -19,7 +19,7 @@ process.on('SIGTERM', handle);
 
 
 var appName = process.env.APP_NAME || "nodejs-sample";
-var serverPort = process.env.APP_PORT || 6001;
+var serverPort = 6001;
 var DEBUG = process.env.DEBUG || false;
 
 // create a new express server
