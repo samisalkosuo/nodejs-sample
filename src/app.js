@@ -41,12 +41,13 @@ String.prototype.format = function () {
 
 app.get('/', function(req, res) {
     rootRequests = rootRequests + 1
-    var now = (new Date()).getTime();
-
+    //var now = (new Date()).getTime();
+    var now = new Date().toISOString();
     res.writeHead(200, {"Content-Type": "text/html"});
     res.write("<html><body>");
     res.write("<h2>App name: "+appName+"</h2>");
     res.write('<a href="/test">Test link</a><br/>');
+    res.write(`<br/><p>Current time UTC: ${now}</p>`);
     res.write("</body></html>");
     res.end(); 
 
