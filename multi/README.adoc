@@ -1,10 +1,28 @@
 = Multiple images
 
-In some cases, application includes multiple images. 
+In some cases, application includes multiple images and those need to be deployed to OpenShift. 
 
 This directory include source of sample application that uses Redis-database.
 
+== Redis
 
+Redis-database is deployed as Docker-image.
+
+* `oc new-app --docker-image=bitnami/redis:6.0.4 -l app=myapp --name myapp-redis -e REDIS_PASSWORD=passw0rd`
+** https://hub.docker.com/r/bitnami/redis/[Bitnami Redis] is used.
+* Deployment created service: _myapp-redis:6379_.
+* Redis client: 
+*** `oc exec -it  myapp-redis-1-q45mk redis-cli`
+*** Authenticate: `auth passw0rd`
+*** See https://redis.io/commands[Redis commands].
+
+== Node.js application
+
+Deploy application from GitHub.
+
+* `oc new-app https://github.com/samisalkosuo/nodejs-sample -l app=myapp --name myapp-app -e REDIS_HOST=myapp-redis -e REDIS_PORT=6379 -e REDIS_PASSWORD=passw0rd --context-dir=multi`
+** `--context-dir=multi` sets context dir within repository where source and Dockerfile is found.
+** -e options set environment variables for Redis connection.
 
 == Template
 

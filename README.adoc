@@ -66,7 +66,7 @@ OpenShift creates resource _deploymentconfig_ or _dc_ when new application is cr
 
 In some cases, application includes multiple images. 
 
-See link:./multi.README.adoc[README in the multi-directory].
+See link:./multi/README.adoc[README in the multi-directory].
 
 
 == Old days
