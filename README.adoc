@@ -58,9 +58,16 @@ In some cases, we may get the application as a container image. For example: _no
 ** Option `-e APP_NAME=mynodepp` sets environment variable for the container.
 ** Note: OpenShift must be able to pull images from the private registry, see https://docs.openshift.com/container-platform/4.3/openshift_images/managing_images/using-image-pull-secrets.html#images-update-global-pull-secret_using-image-pull-secrets[Using image pull secrets].
 
-== Deployment config
+=== Deployment config
 
 OpenShift creates resource _deploymentconfig_ or _dc_ when new application is created. This _deploymentconfig_ can be updated and it would trigger new application pod to be deployed.
+
+=== Multiple images
+
+In some cases, application includes multiple images. 
+
+See link:./multi.README.adoc[README in the multi-directory].
+
 
 == Old days
 
