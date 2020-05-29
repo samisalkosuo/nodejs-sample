@@ -1,0 +1,11 @@
+= Multiple images
+
+In some cases, application includes multiple images. 
+
+This directory include source of sample application that uses Redis-database.
+
+
+
+== Template
+
+OpenShift includes templates.
