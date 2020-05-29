@@ -28,6 +28,32 @@ var app = express();
 var rootRequests = 0
 var testRequests = 0
 
+function increaseNumberOfRootRequests()
+{
+    rootRequests = rootRequests + 1
+
+}
+
+function increaseNumberOfTestRequests()
+{
+    testRequests = testRequests + 1
+
+}
+
+function getNumberOfRequests(path)
+{
+    if (path === "root")
+    {
+        return rootRequests;
+    }
+
+    if (path === "test")
+    {
+        return testRequests;
+    }
+
+    return 0
+}
 
 String.prototype.format = function () {
     var args = arguments;
@@ -40,7 +66,7 @@ String.prototype.format = function () {
 
 
 app.get('/', function(req, res) {
-    rootRequests = rootRequests + 1
+    increaseNumberOfRootRequests()
     //var now = (new Date()).getTime();
     var now = new Date().toISOString();
     res.writeHead(200, {"Content-Type": "text/html"});
@@ -69,9 +95,9 @@ app.get('/health', function(req, res) {
 
 
 app.get('/test', function(req, res) {
-    testRequests = testRequests + 1
-    var now = (new Date()).getTime();
-    res.send('Successful test requests: '+now);
+    increaseNumberOfTestRequests();
+    var now = new Date().toISOString();
+    res.send('Successful test request was done at ' + now);
 
 });
 
@@ -92,12 +118,12 @@ app.get('/metrics', function(req, res) {
     var metricsData='# HELP {0}_test_requests_total Total number of HTTP requests to /test endpoint.\n\
 # TYPE {0}_test_requests_total counter\n\
 {0}_test_requests_total {1} {2}\n\n\
-'.format(metric_prefix,testRequests,timestamp);
+'.format(metric_prefix,getNumberOfRequests("test"),timestamp);
 
     metricsData=metricsData+'# HELP {0}_root_requests_total Total number of HTTP requests to / endpoint.\n\
 # TYPE {0}_root_requests_total counter\n\
 {0}_root_requests_total {1} {2}\n\n\
-'.format(metric_prefix,rootRequests,timestamp);
+'.format(metric_prefix,getNumberOfRequests("root"),timestamp);
 
     res.writeHead(200, {"Content-Type": "text/plain; version=0.0.4"});
     res.write(metricsData, "utf-8");
