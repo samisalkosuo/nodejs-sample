@@ -1,4 +1,4 @@
-FROM node:12.16.3-alpine3.10
+FROM node:12.16.3-alpine3.11
 
 # Create user, change workdir and user
 RUN adduser --disabled-password --home /app user
