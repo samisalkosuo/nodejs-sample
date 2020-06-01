@@ -23,6 +23,35 @@ Deploy application from GitHub.
 * `oc new-app https://github.com/samisalkosuo/nodejs-sample -l app=myapp --name myapp-app -e REDIS_HOST=myapp-redis -e REDIS_PORT=6379 -e REDIS_PASSWORD=passw0rd --context-dir=multi`
 ** `--context-dir=multi` sets context dir within repository where source and Dockerfile is found.
 ** -e options set environment variables for Redis connection.
+** REDIS_HOST is the service name that was created when Redis-database was deployed.
+
+== Resources
+
+By default, `oc new-app` does not include any resource limits or requests to deployed pods. It is a good practice to always set both resource request and limit. Resource meaning both CPU and RAM.
+
+Patch deployment config to include resource request and limit:
+
+* Create patch file for resources:
+```
+cat > resource-patch.yaml << EOF
+spec:
+  template:
+    spec:
+      containers:
+      - name: myapp-app
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+EOF
+```
+* This patch file is for deployment config. After patching dc, pods will request 64Mi of memory and 100m of CPU.
+* Patch using patch command:
+** `oc patch dc myapp-app --patch "$(cat resource-patch.yaml)"`
+
 
 == Template
 
