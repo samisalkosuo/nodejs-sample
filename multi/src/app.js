@@ -13,6 +13,7 @@ const hostname = os.hostname();
 var appName = process.env.APP_NAME || "nodejs-sample";
 var serverPort = 6001;
 var DEBUG = process.env.DEBUG || false;
+var KEEP_ALIVE = process.env.KEEP_ALIVE || "false";
 //Redis env variables
 var REDIS_HOST = process.env.REDIS_HOST || fail("REDIS_HOST env variable not set.");
 var REDIS_PORT = process.env.REDIS_PORT || fail("REDIS_PORT env variable not set.");
@@ -63,6 +64,14 @@ redis = new Redis(redisUrl);
 // create a new express server
 var app = express();
 
+if (KEEP_ALIVE === "false")
+{
+    //Set connection to close, do not keep-alive connection
+    app.use(function(req, res, next) {
+        res.setHeader('Connection', 'close');
+        next();
+    });
+}
 
 function increaseNumberOfRootRequests()
 {    
