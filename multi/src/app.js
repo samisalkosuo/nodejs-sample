@@ -6,7 +6,8 @@
 // for more info, see: http://expressjs.com
 var express = require('express');
 var Redis = require('ioredis');
-
+var os = require("os");
+const hostname = os.hostname();
 
 //read env variables
 var appName = process.env.APP_NAME || "nodejs-sample";
@@ -127,9 +128,10 @@ app.get('/', function(req, res) {
     res.writeHead(200, {"Content-Type": "text/html"});
     res.write("<html><body>");
     res.write("<h2>App name: "+appName+"</h2>");
-    res.write('<a href="/test">Test link</a><br/>');
-    res.write(`<br/><p>Current time UTC: ${now}</p>`);
-    res.write("</body></html>");
+    res.write('<a href="/test">Test link</a><br/><br/>');
+    res.write(`<p>Current time UTC: ${now}<br/>`);
+    res.write(`My host name: ${hostname}<br/>`);
+    res.write("</p></body></html>");
     res.end(); 
 
 });
