@@ -93,6 +93,10 @@ function increaseRedisKey(keyName)
 async function getRedisKeyValue(keyName)
 {
     var value = await redis.get(keyName)
+    if(value == null)
+    {
+        value = 0;
+    }
     return value;
 }
 
