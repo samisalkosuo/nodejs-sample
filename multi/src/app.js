@@ -169,6 +169,24 @@ app.get('/cpuload', function(req, res) {
 
 });
 
+//adapted from https://stackoverflow.com/a/41957152
+async function sleep(req,res) {
+    var min = 10;
+    var max = 5000;
+    //random delay between min and max milliseconds, if ms not in request
+    var delay = Math.floor(req.query.ms || Math.random() * (max - min) + min);
+
+    debug(`Starting to sleep for ${delay} msec...`);
+    await new Promise(resolve => setTimeout(resolve, delay));
+    debug(`Sleep done. Awake again.`)
+    res.send(`Slept for ${delay} msecs.`);
+}
+  
+app.get('/sleep', function(req, res) {
+    increaseRedisKey("sleepRequests");
+    sleep(req, res);
+
+});
 
 async function getMetricsData(res)
 {
@@ -197,7 +215,13 @@ async function getMetricsData(res)
     metricsData=metricsData+'# HELP {0}_cpuload_requests_total Total number of HTTP requests to /cpuload endpoint.\n\
 # TYPE {0}_cpuload_requests_total counter\n\
 {0}_cpuload_requests_total {1} {2}\n\n\
-    '.format(metric_prefix,cpuLoadRequests,timestamp);
+'.format(metric_prefix,cpuLoadRequests,timestamp);
+
+    const sleepRequests = await getRedisKeyValue("sleepRequests");
+    metricsData=metricsData+'# HELP {0}_sleep_requests_total Total number of HTTP requests to /sleep endpoint.\n\
+# TYPE {0}_sleep_requests_total counter\n\
+{0}_sleep_requests_total {1} {2}\n\n\
+'.format(metric_prefix,sleepRequests,timestamp);
 
     res.writeHead(200, {"Content-Type": "text/plain; version=0.0.4"});
     res.write(metricsData, "utf-8");
