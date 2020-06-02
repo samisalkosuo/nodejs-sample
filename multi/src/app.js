@@ -119,7 +119,10 @@ app.get('/', function(req, res) {
     res.write("<html><body>");
     res.write("<h2>App name: "+appName+"</h2>");
     res.write('<a href="/test">Test link</a><br/>');
-    res.write('<a href="/cpuload?n=34">CPU load</a><br/><br/>');
+    res.write('<a href="/cpuload?n=34">CPU load</a><br/>');
+    res.write('<a href="/sleep">Sleep</a><br/>');
+    res.write('<a href="/metrics">Metrics</a><br/>');
+    res.write('<br/>');
     res.write(`<p>Current time UTC: ${now}<br/>`);
     res.write(`My host name: ${hostname}<br/>`);
     res.write("</p></body></html>");
