@@ -114,7 +114,8 @@ app.get('/', function(req, res) {
     res.writeHead(200, {"Content-Type": "text/html"});
     res.write("<html><body>");
     res.write("<h2>App name: "+appName+"</h2>");
-    res.write('<a href="/test">Test link</a><br/><br/>');
+    res.write('<a href="/test">Test link</a><br/>');
+    res.write('<a href="/cpuload?n=34">CPU load</a><br/><br/>');
     res.write(`<p>Current time UTC: ${now}<br/>`);
     res.write(`My host name: ${hostname}<br/>`);
     res.write("</p></body></html>");
@@ -144,6 +145,27 @@ app.get('/test', function(req, res) {
 
 });
 
+function fibonacci(n) {         
+    if (n < 2)
+        return 1;
+    else return fibonacci(n - 2) + fibonacci(n - 1);
+}
+
+app.get('/cpuload', function(req, res) {
+    increaseRedisKey("cpuLoadRequests")
+    //var nowStart = new Date().toISOString();
+    var n = req.query.n || 34;
+    debug(`Starting to calculate Fibonacci number ${n}...`)
+    var start = (new Date()).getTime();
+    var fn = fibonacci(n)
+    var end = (new Date()).getTime();
+    var elapsed = end - start;
+    debug(`Calculated Fibonacci number ${n} finished in ${elapsed} msecs.`);
+    res.send(`Fibonacci ${n} = ${fn} and it was calculated in ${elapsed} msecs.`);
+
+});
+
+
 async function getMetricsData(res)
 {
     // metrics label naming
@@ -166,6 +188,12 @@ async function getMetricsData(res)
 # TYPE {0}_root_requests_total counter\n\
 {0}_root_requests_total {1} {2}\n\n\
 '.format(metric_prefix,rootRequests,timestamp);
+
+    const cpuLoadRequests = await getRedisKeyValue("cpuLoadRequests");
+    metricsData=metricsData+'# HELP {0}_cpuload_requests_total Total number of HTTP requests to /cpuload endpoint.\n\
+# TYPE {0}_cpuload_requests_total counter\n\
+{0}_cpuload_requests_total {1} {2}\n\n\
+    '.format(metric_prefix,cpuLoadRequests,timestamp);
 
     res.writeHead(200, {"Content-Type": "text/plain; version=0.0.4"});
     res.write(metricsData, "utf-8");
