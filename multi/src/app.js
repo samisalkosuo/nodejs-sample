@@ -188,6 +188,17 @@ app.get('/sleep', function(req, res) {
 
 });
 
+async function getMetricsDataForTotals(redisKeyName, appName, metricsNamePrefix, endpoint, timestamp)
+{    
+    const keyValue = await getRedisKeyValue(redisKeyName);
+    var metricsData='# HELP {0}_{3}_total Total number of HTTP requests to {4} endpoint.\n\
+# TYPE {0}_{3}_total counter\n\
+{0}_{3}_total {1} {2}\n\n\
+'.format(appName, keyValue, timestamp, metricsNamePrefix, endpoint);
+    return metricsData;
+
+}
+
 async function getMetricsData(res)
 {
     // metrics label naming
@@ -196,32 +207,16 @@ async function getMetricsData(res)
     //generate metrics data 
     //https://prometheus.io/docs/instrumenting/exposition_formats/
 
-    var metric_prefix=appName.replace(/[^a-zA-Z0-9]+/g,"_");
+    var appNameForMetrics = appName.replace(/[^a-zA-Z0-9]+/g,"_");
     var timestamp = (new Date()).getTime();
-    
-    const testRequests = await getRedisKeyValue("testRequests");
-    var metricsData='# HELP {0}_test_requests_total Total number of HTTP requests to /test endpoint.\n\
-# TYPE {0}_test_requests_total counter\n\
-{0}_test_requests_total {1} {2}\n\n\
-'.format(metric_prefix,testRequests,timestamp);
-
-    const rootRequests = await getRedisKeyValue("rootRequests");
-    metricsData=metricsData+'# HELP {0}_root_requests_total Total number of HTTP requests to / endpoint.\n\
-# TYPE {0}_root_requests_total counter\n\
-{0}_root_requests_total {1} {2}\n\n\
-'.format(metric_prefix,rootRequests,timestamp);
-
-    const cpuLoadRequests = await getRedisKeyValue("cpuLoadRequests");
-    metricsData=metricsData+'# HELP {0}_cpuload_requests_total Total number of HTTP requests to /cpuload endpoint.\n\
-# TYPE {0}_cpuload_requests_total counter\n\
-{0}_cpuload_requests_total {1} {2}\n\n\
-'.format(metric_prefix,cpuLoadRequests,timestamp);
-
-    const sleepRequests = await getRedisKeyValue("sleepRequests");
-    metricsData=metricsData+'# HELP {0}_sleep_requests_total Total number of HTTP requests to /sleep endpoint.\n\
-# TYPE {0}_sleep_requests_total counter\n\
-{0}_sleep_requests_total {1} {2}\n\n\
-'.format(metric_prefix,sleepRequests,timestamp);
+  
+    var metricsData = await getMetricsDataForTotals("testRequests",appNameForMetrics,"test_requests","/test",timestamp);
+    var moreMetricsData = await getMetricsDataForTotals("rootRequests",appNameForMetrics,"root_requests","/",timestamp);
+    metricsData = metricsData + moreMetricsData
+    var moreMetricsData = await getMetricsDataForTotals("cpuLoadRequests",appNameForMetrics,"cpuload_requests","/cpuload",timestamp);
+    metricsData = metricsData + moreMetricsData
+    var moreMetricsData = await getMetricsDataForTotals("sleepRequests",appNameForMetrics,"sleep_requests","/sleep",timestamp);
+    metricsData = metricsData + moreMetricsData
 
     res.writeHead(200, {"Content-Type": "text/plain; version=0.0.4"});
     res.write(metricsData, "utf-8");
