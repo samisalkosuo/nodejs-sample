@@ -73,51 +73,28 @@ if (KEEP_ALIVE === "false")
     });
 }
 
-function increaseNumberOfRootRequests()
-{    
-    // increment redis key by one
-    redis.incr("rootRequests", function (err, result) {
-        if (err) {
-        console.error(err);
-        } else {
-            debug(`Redis key 'rootRequests' incremented. New value: ${result}`); 
-        }
-    });
-}
-
-function increaseNumberOfTestRequests()
+function increaseRedisKey(keyName)
 {
     // increment redis key by one
-    redis.incr("testRequests", function (err, result) {
+    redis.incr(keyName, function (err, result) {
         if (err) {
-        console.error(err);
+            console.error(err);
         } else {
-            debug(`Redis key 'testRequests' incremented. New value: ${result}`); 
+            debug(`Redis key '${keyName}' incremented. New value: ${result}`); 
         }
     });
-
 }
+
 
 //async function that calls redis to get value from a key
 //redis get returns promise and await in the code waits for the value
 //so this is like synchronous call
 //caller of this function needs to be also async and use await
-async function getNumberOfRequests(path)
+async function getRedisKeyValue(keyName)
 {
-    var value = 0
-    if (path === "root")
-    {
-        value = await redis.get("rootRequests")
-    }
-
-    if (path === "test")
-    {
-        value = await redis.get("testRequests")
-    }
-
+    var value = await redis.get(keyName)
     return value;
 }
-
 
 
 String.prototype.format = function () {
@@ -131,7 +108,7 @@ String.prototype.format = function () {
 
 
 app.get('/', function(req, res) {
-    increaseNumberOfRootRequests()
+    increaseRedisKey("rootRequests")
     //var now = (new Date()).getTime();
     var now = new Date().toISOString();
     res.writeHead(200, {"Content-Type": "text/html"});
@@ -161,7 +138,7 @@ app.get('/health', function(req, res) {
 
 
 app.get('/test', function(req, res) {
-    increaseNumberOfTestRequests();
+    increaseRedisKey("testRequests")
     var now = new Date().toISOString();
     res.send('Successful test request was done at ' + now);
 
@@ -177,13 +154,14 @@ async function getMetricsData(res)
 
     var metric_prefix=appName.replace(/[^a-zA-Z0-9]+/g,"_");
     var timestamp = (new Date()).getTime();
-    const testRequests = await getNumberOfRequests("test");
+    
+    const testRequests = await getRedisKeyValue("testRequests");
     var metricsData='# HELP {0}_test_requests_total Total number of HTTP requests to /test endpoint.\n\
 # TYPE {0}_test_requests_total counter\n\
 {0}_test_requests_total {1} {2}\n\n\
 '.format(metric_prefix,testRequests,timestamp);
 
-    const rootRequests = await getNumberOfRequests("root");
+    const rootRequests = await getRedisKeyValue("rootRequests");
     metricsData=metricsData+'# HELP {0}_root_requests_total Total number of HTTP requests to / endpoint.\n\
 # TYPE {0}_root_requests_total counter\n\
 {0}_root_requests_total {1} {2}\n\n\
