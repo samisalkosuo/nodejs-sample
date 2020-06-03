@@ -53,6 +53,65 @@ EOF
 ** `oc patch dc myapp-app --patch "$(cat resource-patch.yaml)"`
 
 
+== Persistence
+
+Redis database does not have any persistence, and that's not good.
+
+Prereq is that OpenShift has a storageclass configured. Storageclass dynamically provisions volumes when Persistent Volume Claim is created.
+
+* Remember to be in the correct project.
+* Create Persistent Volume Claim YAML:
+```
+cat > redis-pvc.yaml << EOF
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: myapp-redis
+  labels:
+    app: myapp
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: managed-nfs-storage
+EOF
+```
+* BTW, storage class used is https://github.com/kubernetes-incubator/external-storage/tree/master/nfs-client[NFS-Client Provisioser].
+* Create the PVC:
+** `oc create -f redis-pvc.yaml`
+* Bitnami Redis container stores data to _/bitnami/redis/data_ directory.
+* When Redis was deployed, deployment config was created. This DC is updated to use PVC.
+** `oc get dc myapp-redis -o yaml`
+* Patch file to add volume claim (resources requests and limits also added, because it is good or even best practice to do so):
+```
+cat > redis-patch.yaml << EOF
+spec:
+  template:
+    spec:
+      containers:
+      - name: myapp-redis
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        volumeMounts:
+        - mountPath: "/bitnami/redis/data"
+          name: redisclaim
+      volumes:
+        - name: redisclaim
+          persistentVolumeClaim:
+            claimName: myapp-redis
+EOF
+```
+* Patch it:
+** `oc patch dc myapp-redis --patch "$(cat redis-patch.yaml)"`
+
+
 == Template
 
 OpenShift includes templates.
