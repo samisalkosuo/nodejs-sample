@@ -1,4 +1,5 @@
 = Node.js sample application
+:toc:
 
 Node.js sample application. Developed to be used with OpenShift and other Kubernetes platforms, but can be used without Kubernetes.
 

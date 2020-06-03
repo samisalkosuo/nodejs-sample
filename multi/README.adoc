@@ -1,4 +1,5 @@
 = Multiple images
+:toc:
 
 In some cases, application includes multiple images and those need to be deployed to OpenShift. 
 
