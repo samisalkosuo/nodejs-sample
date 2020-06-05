@@ -112,6 +112,73 @@ EOF
 * Patch it:
 ** `oc patch dc myapp-redis --patch "$(cat redis-patch.yaml)"`
 
+== ConfigMap and Secret
+
+Both Redis and sample application were created using environment variables in the `oc new-app` command.
+But let's create a ConfigMap for Redis host and port and a Secret for Redis password and then change deployments to use them.
+
+* Create ConfigMap with Redis host and port:
+** `oc create configmap redis-config --from-literal=REDIS_HOST=myapp-redis --from-literal=REDIS_PORT=6379` 
+** Values specified in the command line, https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/[but there are other ways].
+* Label ConfigMap:
+** `oc label cm redis-config app=myapp`
+* Create Secret with Redis password:
+** `oc create secret generic redis-config --from-literal=REDIS_PASSWORD=passw0rd`
+** Secret values specified in the command line, https://kubernetes.io/docs/concepts/configuration/secret/[but there are other ways].
+* Label Secret:
+** `oc label secret redis-config app=myapp`
+* Create patch yaml to patch Redis Deployment Config to use Secret:
+```
+cat > redis-patch-secret.yaml << EOF
+spec:
+  template:
+    spec:
+      containers:
+      - name: myapp-redis
+        env:
+        - name: REDIS_PASSWORD
+          value: ""
+          valueFrom:
+            secretKeyRef:
+              name: redis-config
+              key: REDIS_PASSWORD
+EOF
+```
+* Patch it:
+** `oc patch dc myapp-redis --patch "$(cat redis-patch.yaml)"`
+* Create patch yaml to patch sample app Deployment Config to use ConfigMap and Secret:
+```
+cat > app-patch-cm-and-secret.yaml << EOF
+spec:
+  template:
+    spec:
+      containers:
+      - name: myapp-app
+        env:
+        - name: REDIS_HOST
+          value: ""
+          valueFrom:
+            configMapKeyRef:
+              name: redis-config
+              key: REDIS_HOST
+        - name: REDIS_PORT
+          value: ""
+          valueFrom:
+            configMapKeyRef:
+              name: redis-config
+              key: REDIS_PORT
+        - name: REDIS_PASSWORD
+          value: ""
+          valueFrom:
+            secretKeyRef:
+              name: redis-config
+              key: REDIS_PASSWORD
+EOF
+```
+* Patch it:
+** `oc patch dc myapp-app --patch "$(cat app-patch-cm-and-secret.yaml)"`
+
+
 
 == Template
 
