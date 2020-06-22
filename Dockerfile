@@ -11,7 +11,8 @@ COPY src/ .
 #app uses this port
 EXPOSE 6001
 
+RUN date -R > buildtime.txt
 #install 
 RUN npm install
 
-CMD ["node","app.js"]
+CMD ["node", "app.js"]

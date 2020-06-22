@@ -21,6 +21,17 @@ process.on('SIGTERM', handle);
 var appName = process.env.APP_NAME || "nodejs-sample";
 var serverPort = 6001;
 var DEBUG = process.env.DEBUG || false;
+var BUILD_TIME = "N/A";
+
+//read build time from txt file
+var fs = require('fs');
+try {
+    var data = fs.readFileSync('buildtime.txt', 'utf8');
+    BUILD_TIME=data;
+} 
+catch(e) {
+    //ignore any errors while reading file, it's not so important
+}
 
 // create a new express server
 var app = express();
@@ -46,8 +57,8 @@ app.get('/', function(req, res) {
     res.writeHead(200, {"Content-Type": "text/html"});
     res.write("<html><body>");
     res.write("<h2>App name: "+appName+"</h2>");
-    res.write('<a href="/test">Test link</a><br/>');
-    res.write(`<br/><p>Current time UTC: ${now}</p>`);
+    res.write('<a href="/test">Test link</a><br/>');    
+    res.write(`<br/><p>Current time UTC: ${now}<br/>Build time: ${BUILD_TIME}</p>`);
     res.write("</body></html>");
     res.end(); 
 
