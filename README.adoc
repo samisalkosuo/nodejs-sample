@@ -76,6 +76,26 @@ In some cases, application includes multiple images.
 
 See link:./multi/README.adoc[README in the multi-directory].
 
+=== ImageStreams
+
+OpenShift has a concept called ImageStreams. Basically ImageStreams provide reference to container image that is independent of any registry server. Applications can then reference ImageStreams instead of pointing directly to image in a registry.
+
+One of the benefits using ImageStreams is that application can reference ImageStream and would always get the same version even if image in external registry changes. Also, ImageStream can be changed to point to different external registry and it would not affect how application reference them. 
+
+Assuming Node.js sample application is something that other can use, ImageStream can be easily created.
+
+* Red Hat recommends that ImageStreams are created in a shared project so that all developers can access them.
+** Create new OpenShift project: `oc new-project shared`
+* Create new ImageStream from Node.js container image:
+** `oc import-image nodejs-sample --confirm --reference-policy local --from kazhar/nodejs-sample:latest`
+* Authorize another project to pull images from shared-project. Another project is called _nodejs-is_.
+** `oc policy add-role-to-group system:image-puller system:serviceaccounts:nodejs-is`
+* Create project for new sample app:
+** `oc new-project nodejs-is`
+* Create app from ImageStream:
+** `oc new-app -i shared/nodejs-sample`
+** -i tells where to find imagestream.
+* As simple as that. The new app references ImageStream in the shared-project.
 
 == Old days
 
