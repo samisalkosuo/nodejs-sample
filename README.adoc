@@ -12,6 +12,12 @@ Node.js sample application. Developed to be used with OpenShift and other Kubern
 * Run in background:
 ** `docker run -d --name nodejssample -p 6001:6001 nodejssample`
 
+== Docker Hub
+
+This is available from Docker Hub: https://hub.docker.com/r/kazhar/nodejs-sample.
+
+* `docker pull kazhar/nodejs-sample`
+
 == OpenShift
 
 One way to deploy this app to OpenShift is described here. We are going to use OCP feature, the Docker build, to build container images from source. 
@@ -35,6 +41,7 @@ But why not S2I? IMHO, I have more control and I know exactly what is running in
 * Delete application, if not needed anymore:
 ** `oc delete all -l app=nodejs-sample`
 ** Deletes all resources that have the specified label.
+* BTW, to see all resources `oc new-app` is going to create use `-o yaml` option.
 
 === Secure route
 
