@@ -178,8 +178,17 @@ EOF
 * Patch it:
 ** `oc patch dc myapp-app --patch "$(cat app-patch-cm-and-secret.yaml)"`
 
+== Readiness and liveness probes
 
+Readiness and liveness probes should be present when deploying application to Kubernetes/OpenShift. Probes will inform the platform whether or not pod is ready or alive.
 
-== Template
+OpenShift makes it easy to add probes (probes can be added to YAML too):
 
-OpenShift includes templates.
+* Node.js sample already includes _/health_ endpoint that is used.
+* Set readiness probe:
+** `oc set probe dc/myapp-app --readiness --get-url=http://:8080/health --period-seconds=20`
+* Similar command for liveness probe:
+** `oc set probe dc/myapp-app --liveness --get-url=http://:8080/health --initial-delay-seconds=30  --success-threshold=1 --failure-threshold=3`
+* Redis container does not include HTTP endpoint to check liveness, but we can use TCP:
+** `oc set probe dc/myapp-redis --liveness --open-tcp=6379 --period-seconds=20 --timeout-seconds=1`
+
