@@ -97,6 +97,25 @@ Assuming Node.js sample application is something that other can use, ImageStream
 ** -i tells where to find imagestream.
 * As simple as that. The new app references ImageStream in the shared-project.
 
+== Triggers
+
+OpenShift builds and deployments can use triggers to automatically deploy new version of the application.
+Docs: https://docs.openshift.com/container-platform/4.4/builds/triggering-builds-build-hooks.html.
+
+In the previous section nodejs-sample application was ImageChange trigger is automatically created.
+
+* Check image trigger:
+** `oc describe dc nodejs-sample | grep Triggers`
+** Output is something like this:
+** `Triggers:       Config, Image(nodejs-sample@latest, auto=true)`
+
+It should be noted that even if new image is pushed to external registry, this ImageStream does not change and thus is not triggered.
+ImageStreams must be manually updated using command like this:
+
+* `oc import-image nodejs-sample --confirm --from kazhar/nodejs-sample`
+* And ImageChange trigger is automagically triggered and new deployment will happen.
+
+
 == Old days
 
 In the old days, the other Kubernetes platform was IBM Cloud Private.
