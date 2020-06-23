@@ -192,3 +192,15 @@ OpenShift makes it easy to add probes (probes can be added to YAML too):
 * Redis container does not include HTTP endpoint to check liveness, but we can use TCP:
 ** `oc set probe dc/myapp-redis --liveness --open-tcp=6379 --period-seconds=20 --timeout-seconds=1`
 
+== Template
+
+OpenShift describes templates as
+
+ _"A template describes a set of objects that can be parameterized and processed to produce a list of objects for creation by OpenShift Container Platform."_
+
+Docs: https://docs.openshift.com/container-platform/4.2/openshift_images/using-templates.html.
+
+So basically, a template is a YAML file that describes all the objects that needs to be created. In the case of this multi-container sample app, template would include creation of pods, services, PVCs, routes etc.
+
+Templates are also very similar to https://helm.sh[Helm charts].
+
