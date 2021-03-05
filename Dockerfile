@@ -1,18 +1,21 @@
-FROM node:12.16.3-alpine3.11
+FROM node:15.9.0-alpine3.13
 
 # Create user, change workdir and user
 RUN adduser --disabled-password --home /app user
 WORKDIR "/app"
-USER user
+
+COPY src/package.json .
+#install dependencies
+RUN npm install
 
 #add app code
 COPY src/ .
 
-#app uses this port
-EXPOSE 6001
-
 RUN date -R > buildtime.txt
-#install 
-RUN npm install
+
+USER user
+
+#app uses this port
+EXPOSE 8080
 
 CMD ["node", "app.js"]
