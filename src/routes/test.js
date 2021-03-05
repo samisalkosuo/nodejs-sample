@@ -5,12 +5,10 @@ import {Data} from '../utils/data.js';
 
 var router = express.Router();
 
-router.get('/test', function(req, res) {
+router.get('/', function(req, res) {
     Data.setState ({ testRequests: Data.state.testRequests + 1 }) 
-//    testRequests = testRequests + 1
-    var now = (new Date()).getTime();
-    res.send('Successful test requests: '+now);
-
+    let now = (new Date()).toISOString();
+    res.send(`${now}: successful test requests: ${Data.state.testRequests}`);
 });
 
 export { router};
