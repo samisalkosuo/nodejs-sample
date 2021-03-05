@@ -11,7 +11,7 @@ const hostname = os.hostname();
 
 //read env variables
 var appName = process.env.APP_NAME || "nodejs-sample";
-var serverPort = 6001;
+var serverPort = 8080;
 var DEBUG = process.env.DEBUG || false;
 var KEEP_ALIVE = process.env.KEEP_ALIVE || "false";
 //Redis env variables
