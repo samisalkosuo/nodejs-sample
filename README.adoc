@@ -8,7 +8,7 @@ Node.js sample application. Developed to be used with OpenShift and other Kubern
 * Build:
 ** `docker build -t nodejssample .`
 * Run in foreground:
-** `docker run -it --rm --name nodejssample run -p 6001:6001 nodejssample`
+** `docker run -it --rm --name nodejssample -p 6001:6001 nodejssample`
 * Run in background:
 ** `docker run -d --name nodejssample -p 6001:6001 nodejssample`
 

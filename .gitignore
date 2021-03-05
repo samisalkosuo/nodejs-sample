@@ -5,6 +5,7 @@ env.properties
 /old
 TODO*
 API_KEY.txt
+demo/
 
 # dependencies
 /node_modules
