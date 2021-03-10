@@ -2,16 +2,22 @@
 // node.js  application 
 //------------------------------------------------------------------------------
 
+//these two lines needed to use require in Node.js >14
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+ 
 // This application uses express as its web server
 // for more info, see: http://expressjs.com
 import express from 'express';
-import {debug} from './utils/logger.js';
+import {debug,log} from './utils/logger.js';
 import {Data} from './utils/data.js'
+
+const all_routes = require('express-list-endpoints');
 
 // catch SIGINT and SIGTERM and exit
 // Using a single function to handle multiple signals
 function handle(signal) {
-    console.log(`Received ${signal}. Exiting...`);
+    log(`Received ${signal}. Exiting...`);
     process.exit(1)
   }  
 //SIGINT is typically CTRL-C
@@ -41,9 +47,11 @@ catch(e) {
 // create a new express server
 var app = express();
 
-//common for all requets
-import {router as common} from './routes/common.js';
-app.use(common);
+var server = null;
+
+//request logger
+import {router as requestLogger} from './routes/requestLogger.js';
+app.use(requestLogger);
 
 import {router as index} from './routes/index.js';
 app.use('/', index);
@@ -54,10 +62,40 @@ app.use('/health', health);
 import {router as metrics} from './routes/metrics.js';
 app.use('/metrics', metrics);
 
-const server = app.listen(serverPort, "0.0.0.0", function() {
+import {router as test} from './routes/test.js';
+app.use('/test', test);
+
+import {router as hangserver} from './routes/hangServer.js';
+app.use('/hangserver', hangserver);
+
+import {router as consumememory} from './routes/consumeMemory.js';
+app.use('/consumememory', consumememory);
+
+function serverKilled()
+{
+    log(`Server killed`);
+}
+
+app.use("/killserver",function(req, res) {
+    res.writeHead(200, {"Content-Type": "text/html"});
+    var html = `<html><body>
+<h2>Server killed</h2>
+</body></html>`;
+    res.write(html);
+    res.end();
+    server.close(serverKilled);
+});
+
+app.get('/endpoints', function(req, res) {
+    res.status(200).send(all_routes(app));
+    //res.writeHead(200, {'content-type' : 'text/plain'});
+    //res.end("Endpoints:\n\n"+JSON.stringify(all_routes(app),null,2)+'\n');
+});
+
+server = app.listen(serverPort, "0.0.0.0", function() {
     let host = server.address().address;
     let port = server.address().port;
-    console.log('Server started and listening http://'+host+':'+port)
+    log('Server started and listening http://'+host+':'+port)
 });
 
 server.on('connection', function(socket) {
