@@ -1,3 +1,8 @@
+
+export function getRndInteger(min, max) {
+    return Math.floor(Math.random() * (max - min) ) + min;
+  }
+
 export function formatBytes2(bytes, decimals = 2, binaryUnits = true) {
     if(bytes == 0) {
         return '0 Bytes';
@@ -9,6 +14,7 @@ export function formatBytes2(bytes, decimals = 2, binaryUnits = true) {
     var unitChanges = Math.floor(Math.log(bytes) / Math.log(unitMultiple));
     return parseFloat((bytes / Math.pow(unitMultiple, unitChanges)).toFixed(decimals || 0)) + ' ' + unitNames[unitChanges];
 }
+
 export function formatBytes(bytes, decimals = 2) {
     if (bytes === 0) return '0 Bytes';
 
