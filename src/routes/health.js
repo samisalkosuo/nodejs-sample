@@ -11,10 +11,11 @@ router.get('/', function (req, res) {
     //all other fail
 
     debug("healthcheck");
-    //do some status check and set status code
-    var statusCode=204//no content
-    res.writeHead(statusCode);
-    res.end(); 
+    //TODO: do some status check and set status code
+    res.writeHead(200, {"Content-Type": "text/plain"});
+    res.write("OK");
+    res.end();
+
 })
 
 export { router};
