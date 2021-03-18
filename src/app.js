@@ -2,17 +2,12 @@
 // node.js  application 
 //------------------------------------------------------------------------------
 
-//these two lines needed to use require in Node.js >14
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
- 
+
 // This application uses express as its web server
 // for more info, see: http://expressjs.com
 import express from 'express';
 import {debug,log} from './utils/logger.js';
 import {Data} from './utils/data.js'
-
-const all_routes = require('express-list-endpoints');
 
 // catch SIGINT and SIGTERM and exit
 // Using a single function to handle multiple signals
@@ -30,6 +25,7 @@ var appName = process.env.APP_NAME || "nodejs-sample";
 Data.setState ({ appName: appName }) 
 Data.setState ({ rootRequests: 0 }) 
 Data.setState ({ testRequests: 0 }) 
+Data.setState ({ calculatePiRequests: 0 }) 
 
 var serverPort = 8080;
 
@@ -46,8 +42,6 @@ catch(e) {
 
 // create a new express server
 var app = express();
-
-var server = null;
 
 //request logger
 import {router as requestLogger} from './routes/requestLogger.js';
@@ -74,33 +68,19 @@ app.use('/consumememory', consumememory);
 import {router as calculatepi} from './routes/calculatePi.js';
 app.use('/calculatepi', calculatepi);
 
-function serverKilled()
-{
-    log(`Server killed`);
-}
+import {router as killserver} from './routes/killServer.js';
+app.use('/killserver', killserver);
 
-app.use("/killserver",function(req, res) {
-    res.writeHead(200, {"Content-Type": "text/html"});
-    var html = `<html><body>
-<h2>Server killed</h2>
-</body></html>`;
-    res.write(html);
-    res.end();
-    server.close(serverKilled);
-});
+import {router as endpoints} from './routes/endpoints.js';
+app.use('/endpoints', endpoints);
 
-app.get('/endpoints', function(req, res) {
-    res.status(200).send(all_routes(app));
-    //res.writeHead(200, {'content-type' : 'text/plain'});
-    //res.end("Endpoints:\n\n"+JSON.stringify(all_routes(app),null,2)+'\n');
-});
-
-server = app.listen(serverPort, "0.0.0.0", function() {
-    let host = server.address().address;
-    let port = server.address().port;
+app.server = null;
+app.server = app.listen(serverPort, "0.0.0.0", function() {
+    let host = app.server.address().address;
+    let port = app.server.address().port;
     log('Server started and listening http://'+host+':'+port)
 });
 
-server.on('connection', function(socket) {
+app.server.on('connection', function(socket) {
     debug(`new connection, remote address: ${socket.remoteAddress}`);
 });

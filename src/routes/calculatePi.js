@@ -11,7 +11,8 @@ var router = express.Router();
 
 router.get('/', function(req, res) {
     log(`Calculating pi...`);
-    var digits = BigInt(Utils.getRndInteger(31,10000));
+    Data.setState ({ calculatePiRequests: Data.state.calculatePiRequests + 1 }) 
+    var digits = BigInt(Utils.getRndInteger(31,20000));
     debug(`req.query.digits: ${req.query.digits}`);
     if (req.query.digits)
     {

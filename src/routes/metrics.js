@@ -39,6 +39,11 @@ router.get('/', function(req, res) {
 {0}_root_requests_total {1} {2}\n\n\
 '.format(metric_prefix,Data.state.rootRequests,timestamp);
 
+  metricsData=metricsData+'# HELP {0}_calculatepi_requests_total Total number of HTTP requests to /calculatepi endpoint.\n\
+# TYPE {0}_calculatepi_requests_total counter\n\
+{0}_calculatepi_requests_total {1} {2}\n\n\
+'.format(metric_prefix,Data.state.calculatePiRequests,timestamp);
+
     res.writeHead(200, {"Content-Type": "text/plain; version=0.0.4"});
     res.write(metricsData, "utf-8");
     res.end(); 

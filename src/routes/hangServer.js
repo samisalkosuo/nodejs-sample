@@ -5,7 +5,7 @@ import {Data} from '../utils/data.js';
 var router = express.Router();
 
 router.get('/', function(req, res) {
-    log(`Hanging server. Kill the process/container.`);
+    log(`Server hangs. Application will never respond nor recover. Kill the process/container.`);
     while(true);
 });
 
