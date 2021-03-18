@@ -20,6 +20,7 @@ Network: ${element.iface} ${element.ip4}<br/>
 <h2>App name: ${Data.state.appName}</h2>
 
 <a href="/test">Test link</a><br/>
+<a href="/consumememory">Consume memory</a><br/>
 <a href="/calculatepi">Calculate digits of Pi</a><br/>
 <br/>
 

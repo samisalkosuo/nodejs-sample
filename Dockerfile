@@ -1,5 +1,7 @@
 FROM node:15.9.0-alpine3.13
 
+ENV HEAP_SIZE 2048
+
 # Create user, change workdir and user
 RUN adduser --disabled-password --home /app user
 WORKDIR "/app"
@@ -18,4 +20,4 @@ USER user
 #app uses this port
 EXPOSE 8080
 
-CMD ["node", "app.js"]
+CMD ["sh", "-c", "node --max-old-space-size=${HEAP_SIZE} app.js"]

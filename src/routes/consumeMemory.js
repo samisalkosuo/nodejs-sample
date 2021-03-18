@@ -13,6 +13,8 @@ var router = express.Router();
 //
 const allocations = []; 
 
+var allocatedMemory = null;
+
 //
 // Allocate a certain size to test if it can be done.
 //
@@ -37,11 +39,14 @@ function allocToMax () {
     const mu = process.memoryUsage();
     debug(mu);
     const gbStart = mu[field] / 1024 / 1024 / 1024;
-    log(`Start ${Math.round(gbStart * 100) / 100} GB`);
+    allocatedMemory = `Allocated ${Math.round(gbStart * 100) / 100} GB`
+    log(allocatedMemory);
 
-    let allocationStep = 100 * 1024;
+    let allocationStep = 200 * 1024;
+    var i = 0;
 
-    while (true) {
+    function consumeMemory()
+    {
         // Allocate memory.
         const allocation = alloc(allocationStep);
 
@@ -51,18 +56,37 @@ function allocToMax () {
         // Check how much memory is now allocated.
         const mu = process.memoryUsage();
         const mbNow = mu[field] / 1024 / 1024 / 1024;
-        //console.log(`Total allocated       ${Math.round(mbNow * 100) / 100} GB`);
-        log(`Allocated since start ${Math.round((mbNow - gbStart) * 100) / 100} GB`);
 
-        // Infinite loop, never get here.
-    }
+        i = i + 1
+
+        if (i % 500 == 0)
+        {
+            allocatedMemory = `Allocated ${Math.round((mbNow - gbStart) * 100) / 100} GB`
+            log(allocatedMemory);
+        }
+        setTimeout(consumeMemory, 1);
+    };
+
+    //start consuming memory
+    setTimeout(consumeMemory, 1);
 
     // Infinite loop, never get here.
 };
 
 router.get('/', function(req, res) {
     log(`Consuming memory...`);
-    allocToMax();
+    setTimeout(allocToMax, 10);
+    res.writeHead(200, {"Content-Type": "text/plain"});
+    if (allocatedMemory)
+    {
+        res.write(allocatedMemory);
+    }
+    else
+    {
+        res.write("Consumimg memory...");
+    }
+    res.end();
+
 });
 
 export { router};
