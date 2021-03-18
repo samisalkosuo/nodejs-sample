@@ -23,51 +23,43 @@ This is available from Docker Hub: https://hub.docker.com/r/kazhar/nodejs-sample
 
 == OpenShift
 
-One way to deploy this app to OpenShift is described here. We are going to use OCP feature, the Docker build, to build container images from source. 
+=== Deploy application
 
-But why not S2I? IMHO, I have more control and I know exactly what is running in my local development environment and in the server when I use my own container image. I can also deploy the same image to other Kubernetes/Docker environments easily.
+Application can be deployed from container image or directly from (GitHub) source. The Container image may be given as tar-file (for example: _nodejssample.tar.gz_) or it is available from registry.
 
-* Login to OCP.
-* Create a new project:
-** `oc new-project nodejssample`
-* Create new app:
-** `oc new-app https://github.com/samisalkosuo/nodejs-sample -l app=nodejs-sample`
-** _-l app=nodejs-sample_ adds label to deployment.
-** If using option _--name mynodeapp_, it would set name for the generated resources.
-* Watch pod status: `watch -n3 oc get pods`
-* Soon pod _nodejs-sample-1_ is running.
+Here we use image that is available in Docker Hub.
+
+* Login to OCP and create a new project.
+* Create new app and specify docker image:
+** `oc new-app --docker-image=docker.io/kazhar/nodejs-sample:0.1 -l app=nodeapp --name nodeapp -e APP_NAME=nodepp -e DEBUG=true`
+*** Option `--name nodeapp` sets the name for the resources.
+*** Environment variables are set also. For example, option `-e APP_NAME=mynodepp`.
+*** Note: If using private registry, OpenShift must be able to pull images from the private registry, see https://docs.openshift.com/container-platform/4.3/openshift_images/managing_images/using-image-pull-secrets.html#images-update-global-pull-secret_using-image-pull-secrets[Using image pull secrets].
+*** Creating application from source is done using `oc new-app https://github.com/samisalkosuo/nodejs-sample -l app=nodeapp --name nodeapp -e APP_NAME=nodepp -e DEBUG=true`
 * Creating new-app created also service:
-** `oc describe svc nodejs-sample`
+** `oc describe svc nodeapp`
 * But route is not created automatically. So let's create it:
-** `oc expose svc nodejs-sample`
+** `oc expose svc nodeapp`
 * Check the route URL:
 ** `oc get route`
 * Go to that route URL.
 * Delete application, if not needed anymore:
-** `oc delete all -l app=nodejs-sample`
+** `oc delete all -l app=nodeapp`
 ** Deletes all resources that have the specified label.
-* BTW, to see all resources `oc new-app` is going to create use `-o yaml` option.
 
-=== Secure route
+==== Secure route
 
-The default OCP route is unsecured and does not accept TLS. This is the case at the time of writing and OCP version 4.3.19.
+The default OCP route is unsecured and does not accept TLS. This is the case at the time of writing and OCP version 4.6.19.
 
 * https://docs.openshift.com/container-platform/4.3/networking/routes/secured-routes.html[OCP documentation] shows how to add custom certificate and use either edge or reencrypt.
 * Or you can use existing ingress certificate by patching route to set termination to edge and redirect if using plain http:
-** `oc patch route nodejs-sample -p '{"spec":{"tls":{"insecureEdgeTerminationPolicy":"Redirect","termination":"edge"}}}'`
+** `oc patch route nodeapp -p '{"spec":{"tls":{"insecureEdgeTerminationPolicy":"Redirect","termination":"edge"}}}'`
 
-=== Application as a container image
+== Usage
 
-In some cases, we may get the application as a container image. For example: _nodejssample.tar.gz_.
+Nodejs-sample app has various endpoints.
 
-* Load image locally:
-** `docker load < nodejssample.tar.gz`
-* Login to private image registry, tag and push nodejssample image there.
-** As an example, let's say that image in private registry is: _registry.private.net:5000/nodejssample:0.1_.
-* Login to OCP and create a new project.
-* Create new app and specify docker image:
-** `oc new-app --docker-image=registry.private.net:5000/nodejssample:0.1 -l app=mynodeapp --name mynodeapp -e APP_NAME=mynodepp`
-** Option `--name mynodeapp` sets the name for the resources.
-** Option `-e APP_NAME=mynodepp` sets environment variable for the container.
-** Note: OpenShift must be able to pull images from the private registry, see https://docs.openshift.com/container-platform/4.3/openshift_images/managing_images/using-image-pull-secrets.html#images-update-global-pull-secret_using-image-pull-secrets[Using image pull secrets].
-
+* `/endpoints` - JSON of endpoints.
+* `/test` - dummy test page.
+* `/calculatepi` - calculates digits of Pi (10-20000). Specify digits with parameter `?digits=12345`.
+* `/killserver` - kills server.
