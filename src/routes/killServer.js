@@ -9,11 +9,12 @@ function serverKilled()
     log(`Server killed`);
 }
 
-router.use("/",function(req, res) {
-    res.writeHead(200, {"Content-Type": "text/html"});
+router.get("/",function(req, res) {
+    let now = (new Date()).toISOString();
     var html = `<html><body>
-<h2>Server killed</h2>
+<h2>Server killed at ${now}</h2>
 </body></html>`;
+    res.writeHead(200, {"Content-Type": "text/html"});
     res.write(html);
     res.end();
     req.app.server.close(serverKilled);
