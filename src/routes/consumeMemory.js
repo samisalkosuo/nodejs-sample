@@ -70,12 +70,14 @@ function allocToMax () {
     //start consuming memory
     setTimeout(consumeMemory, 1);
 
-    // Infinite loop, never get here.
 };
 
 router.get('/', function(req, res) {
     log(`Consuming memory...`);
-    setTimeout(allocToMax, 10);
+    if (allocatedMemory==null)
+    {
+        setTimeout(allocToMax, 10);
+    }
     res.writeHead(200, {"Content-Type": "text/plain"});
     if (allocatedMemory)
     {

@@ -21,6 +21,12 @@ This is available from Docker Hub: https://hub.docker.com/r/kazhar/nodejs-sample
 * Run:
 ** `docker run -it --rm -p 8080:8080 kazhar/nodejs-sample`
 
+== Environment variables
+
+* `DEBUG=true` - print debug stuff.
+* `APP_NAME=appname` - set application name.
+* `HEAP_SIZE=8182` - set node.js heap size, in MB.
+
 == OpenShift
 
 === Deploy application
