@@ -10,7 +10,6 @@ router.get('/', function (req, res) {
     //any code 200 >= code < 400 is success
     //all other fail
 
-    debug("healthcheck");
     //TODO: do some status check and set status code
     res.writeHead(200, {"Content-Type": "text/plain"});
     res.write("OK");

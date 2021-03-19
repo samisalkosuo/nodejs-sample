@@ -6,7 +6,7 @@
 // This application uses express as its web server
 // for more info, see: http://expressjs.com
 import express from 'express';
-import {debug,log} from './utils/logger.js';
+import {debug,log,trace} from './utils/logger.js';
 import {Data} from './utils/data.js'
 
 // catch SIGINT and SIGTERM and exit
@@ -82,6 +82,8 @@ app.server = app.listen(serverPort, "0.0.0.0", function() {
     log('Server started and listening http://'+host+':'+port)
 });
 
+
 app.server.on('connection', function(socket) {
-    debug(`new connection, remote address: ${socket.remoteAddress}`);
+    trace(`new connection, remote address: ${socket.remoteAddress}`);
 });
+

@@ -23,6 +23,14 @@ export function debug(...args) {
     }
 };
 
+export function trace(...args) {
+    if (process.env.TRACE) {
+        let now = (new Date()).toISOString();
+        console.log(`${now} TRACE `, getString(args));
+    }
+};
+
+
 export function log(...args) {
     let now = (new Date()).toISOString();
     console.log(`${now} `, getString(args));
