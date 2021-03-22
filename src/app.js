@@ -65,6 +65,9 @@ app.use('/hangserver', hangserver);
 import {router as consumememory} from './routes/consumeMemory.js';
 app.use('/consumememory', consumememory);
 
+import {router as consumecpu} from './routes/consumeCPU.js';
+app.use('/consumecpu', consumecpu);
+
 import {router as calculatepi} from './routes/calculatePi.js';
 app.use('/calculatepi', calculatepi);
 

@@ -20,4 +20,4 @@ USER user
 #app uses this port
 EXPOSE 8080
 
-CMD ["sh", "-c", "node --max-old-space-size=${HEAP_SIZE} app.js"]
+CMD ["sh", "-c", "NPROC=$(nproc) node --max-old-space-size=${HEAP_SIZE} app.js"]
