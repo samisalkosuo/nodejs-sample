@@ -53,6 +53,19 @@ Here we create image directly from GitHub source.
 ** `oc delete all -l app=nodeapp`
 ** Deletes all resources that have the specified label.
 
+=== Set health check
+
+Using OpenShift 4.6.19, health check can not be added from command line. See documentation to add health checks: https://docs.openshift.com/container-platform/4.6/applications/application-health.html.
+
+It is good practice to add health check to all applications.
+
+=== Set requests and limits
+
+When deploying application from source code, requests/limits are not set for pods. It is good practice to include them.
+
+* Set resource requests/limits using for example:
+** `oc set resources deployment nodeapp --requests cpu=100m,memory=256Mi --limits cpu=500m,memory=1024Mi`
+
 ==== Secure route
 
 The default OCP route is unsecured and does not accept TLS. This is the case at the time of writing and OCP version 4.6.19.
@@ -65,12 +78,14 @@ The default OCP route is unsecured and does not accept TLS. This is the case at 
 
 * Since deployment was created from GitHub source, update is done using:
 ** `oc start-build nodeapp`
+* New image is created from source.
 
 == Usage
 
 Nodejs-sample app has various endpoints.
 
-* `/endpoints` - JSON of endpoints.
+* `/endpoints` - List of endpoints.
 * `/test` - dummy test page.
 * `/calculatepi` - calculates digits of Pi (10-20000). Specify digits with parameter `?digits=12345`.
 * `/killserver` - kills server.
+* and others.
