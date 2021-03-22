@@ -63,7 +63,7 @@ It is good practice to add health check to all applications.
 
 When deploying application from source code, requests/limits are not set for pods. It is good practice to include them.
 
-* Set resource requests/limits using for example:
+* Set resource requests/limits:
 ** `oc set resources deployment nodeapp --requests cpu=100m,memory=256Mi --limits cpu=500m,memory=1024Mi`
 
 ==== Secure route

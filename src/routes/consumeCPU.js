@@ -9,9 +9,9 @@ import {Data} from '../utils/data.js';
 var router = express.Router();
 
 const util = require('util');
-const execSync = util.promisify(require('child_process').exec);
 const exec = util.promisify(require('child_process').exec);
 
+//consume all CPU
 async function consumeCPU() {
   try {
       const { stdout, stderr } = exec('sh ./scripts/consume_cpu.sh');
