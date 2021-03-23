@@ -24,7 +24,6 @@ Network: ${element.iface} ${element.ip4}<br/>
 <a href="/calculatepi">Calculate digits of Pi</a><br/>
 <a href="/endpoints">Endpoints</a><br/>
 <br/>
-<p>hello</p>
 <p>
 Current time UTC: ${now}<br/>Build time: ${Data.state.buildTime}
 </p>
