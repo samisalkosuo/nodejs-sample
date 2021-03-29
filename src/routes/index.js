@@ -18,7 +18,7 @@ Network: ${element.iface} ${element.ip4}<br/>
     });
     var html = `<html><head><meta charset="UTF-8"><title>${Data.state.appName}</title></head><body>
 <h2>App name: ${Data.state.appName}</h2>
-
+<p>Hello World!</p>
 <a href="/test">Test link</a><br/>
 <a href="/consumememory">Consume memory</a><br/>
 <a href="/calculatepi">Calculate digits of Pi</a><br/>
