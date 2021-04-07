@@ -6,6 +6,10 @@ ENV HEAP_SIZE 2048
 RUN adduser --disabled-password --home /app user
 WORKDIR "/app"
 
+#sets the directory and file permissions to allow users in the root group to access them (OpenShift)
+RUN chgrp -R 0 /app && chmod -R g=u /app
+
+
 COPY src/package.json .
 #install dependencies
 RUN npm install
@@ -20,8 +24,6 @@ USER user
 #app uses this port
 EXPOSE 8080
 
-#sets the directory and file permissions to allow users in the root group to access them (OpenShift)
-RUN chgrp -R 0 /app && chmod -R g=u /app
 
 #CMD /bin/sh
 CMD ["sh", "-c", "NPROC=$(nproc) node --max-old-space-size=${HEAP_SIZE} app.js"]
