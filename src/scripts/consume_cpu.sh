@@ -6,9 +6,10 @@ function consumeCPU
 {
     local CORES=$1
     for i in `seq 1 $NPROC`; do 
-      #two processes started
-      cat /dev/zero > /dev/null &
+      #starting two processes per processor
       sha1sum /dev/zero &
+      sha1sum /dev/zero &
+      #cat /dev/zero > /dev/null &
       #echo "$i: started /dev/zero > /dev/null &"
       #echo "$i: started sha1sum /dev/zero &"
     done

@@ -2,7 +2,7 @@ FROM node:15.9.0-alpine3.13
 
 ENV HEAP_SIZE 2048
 
-# Create user, change workdir and user
+# Create user and change workdir
 RUN adduser --disabled-password --home /app user
 WORKDIR "/app"
 
