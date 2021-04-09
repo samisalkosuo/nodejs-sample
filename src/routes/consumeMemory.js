@@ -138,11 +138,12 @@ router.get('/', function(req, res) {
 
 router.get('/start', function(req, res) {
     log(`Start consuming memory...`);
-    if (allocatedMemory==null)
+    if (allocatedMemory == null || stopAllocatingMemory == true)
     {
         stopAllocatingMemory = false;
         setTimeout(allocToMax, 10);
     }
+
     res.writeHead(200, {"Content-Type": "text/html"});
     if (allocatedMemory)
     {
