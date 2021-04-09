@@ -78,6 +78,9 @@ app.use('/killserver', killserver);
 import {router as env} from './routes/environment.js';
 app.use('/env', env);
 
+import {router as systeminfo} from './routes/systemInfo.js';
+app.use('/systeminfo', systeminfo);
+
 import {router as endpoints} from './routes/endpoints.js';
 app.use('/endpoints', endpoints);
 
