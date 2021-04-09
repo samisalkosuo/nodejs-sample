@@ -22,10 +22,11 @@ process.on('SIGTERM', handle);
 
 //init variables
 var appName = process.env.APP_NAME || "nodejs-sample";
-Data.setState ({ appName: appName }) 
-Data.setState ({ rootRequests: 0 }) 
-Data.setState ({ testRequests: 0 }) 
-Data.setState ({ calculatePiRequests: 0 }) 
+Data.setState ({ appName: appName });
+Data.setState ({ rootRequests: 0 });
+Data.setState ({ testRequests: 0 });
+Data.setState ({ calculatePiRequests: 0 });
+Data.setState ({ endpointlinks: null });
 
 var serverPort = 8080;
 

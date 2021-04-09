@@ -1,8 +1,14 @@
+//these two lines needed to use require in Node.js >14
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const all_routes = require('express-list-endpoints');
+
 import express from 'express';
 import { debug, error } from '../utils/logger.js';
 import { Data } from '../utils/data.js';
 import * as Utils from '../utils/utils.js';
 import * as SystemInformation from 'systeminformation';
+
 var router = express.Router();
 
 function getHTML(systemData) {
@@ -16,7 +22,8 @@ function getHTML(systemData) {
 Network: ${element.iface} ${element.ip4}<br/>
 `
     });
-    var html = `<html><head><meta charset="UTF-8"><title>${Data.state.appName}</title></head><body>
+
+    var html = `
 <h2>App name: ${Data.state.appName}</h2>
 <p>Hello World!</p>
 <a href="/test">Test link</a><br/>
@@ -37,15 +44,34 @@ Hostname: ${systemData.osInfo.hostname}<br/>
 FQDN: ${systemData.osInfo.fqdn}<br/>
 ${networkHtml}
 </p>
-
-</body>
-</html>
-    `;
-    return html
+`;
+    return Utils.getHTML("home",html);
 };
+
+function getEndPoints(req)
+{
+    if (Data.state.endpointlinks == null)
+    {
+        let endpointJson = all_routes(req.app);
+        var endpoints = [];
+        endpointJson.forEach(endpoint => {
+            endpoint.methods.forEach(method => {
+                let pathStr = JSON.stringify(endpoint.path).replaceAll("\"","");
+                endpoints.push(`<a href="${pathStr}">${pathStr}</a>`)
+            });
+        });
+        endpoints.sort();
+        Data.setState({ endpointlinks: endpoints });
+    }
+
+}
 
 router.get('/', function (req, res) {
     Data.setState({ rootRequests: Data.state.rootRequests + 1 });
+    
+    //get all endpoints and save to state
+    getEndPoints(req);
+
     // define all values, you want to get back
     var valueObject = {
         cpu: 'manufacturer, brand,cores',

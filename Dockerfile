@@ -26,4 +26,4 @@ EXPOSE 8080
 
 
 #CMD /bin/sh
-CMD ["sh", "-c", "NPROC=$(nproc) node --max-old-space-size=${HEAP_SIZE} app.js"]
+CMD ["sh", "-c", "NPROC=$(nproc) node --expose-gc --max-old-space-size=${HEAP_SIZE} app.js"]

@@ -1,3 +1,96 @@
+import {Data} from '../utils/data.js';
+
+function getCSSStyle()
+{
+    const css=`<style>
+body {
+  background-color:#282828;
+  color:#33ff33;
+}  
+a:link {
+  color: gold;
+}
+a:visited {
+  color: gold;
+}
+pre {
+    overflow-x: auto;
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    white-space: -pre-wrap;
+    white-space: -o-pre-wrap;
+    word-wrap: break-word;
+ }
+ table {
+    width: 100%;
+  }
+ </style>`;
+
+    return css;
+}
+
+function getEndpointLinks()
+{
+    var linkHtml = "";
+    if (Data.state.endpointlinks != null)
+    {
+        linkHtml = "<table><tr>"
+        var i = 1;
+        Data.state.endpointlinks.forEach(element => {
+            linkHtml = linkHtml + `<td>${element}</td>`;
+            if (i % 4 == 0)
+            {
+                linkHtml = linkHtml + "</tr><tr>";
+
+            }
+            i = i + 1;
+        });
+
+        linkHtml = linkHtml + "</tr></table>"
+    }
+
+    return linkHtml;
+}
+
+function getHtmlHeader(title)
+{
+    const htmlHeader=`<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8"/>
+  <title>${Data.state.appName} - ${title}</title>
+  ${getCSSStyle()}
+</head>
+<body>
+${getEndpointLinks()}
+`;
+    return htmlHeader;
+}
+
+const htmlFooter=`
+</body>
+</html>
+`;
+
+export function getPreHTML(title,content)
+{
+    const html = `${getHtmlHeader(title)}
+<pre>
+${content}
+</pre>
+${htmlFooter}`;
+    
+    return html;
+}
+
+export function getHTML(title,htmlContent)
+{
+    const html = `${getHtmlHeader(title)}
+${htmlContent}
+${htmlFooter}`;
+    
+    return html;
+}
 
 export function getRndInteger(min, max) {
     return Math.floor(Math.random() * (max - min) ) + min;

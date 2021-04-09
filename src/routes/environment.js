@@ -1,16 +1,20 @@
 import express from 'express';
 import {debug} from '../utils/logger.js';
+import * as Utils from '../utils/utils.js';
 
 var router = express.Router();
 
 // define the home page route
 router.get('/', function (req, res) {
     //list environment variables
-    res.writeHead(200, {"Content-Type": "text/plain"});
+    var variables = "";
     Object.entries(process.env).forEach(([key, value]) => {
-        res.write(`${key}=${value}\n`);
+        variables = variables + `${key}=${value}\n`
      });    
-    res.end();
+     res.writeHead(200, {"Content-Type": "text/html"});
+     const html = Utils.getPreHTML("Environment variables",`${variables}`);
+     res.write(html);
+     res.end();
 
 })
 

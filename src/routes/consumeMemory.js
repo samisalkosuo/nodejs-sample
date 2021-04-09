@@ -3,17 +3,33 @@
 
 
 import express from 'express';
-import {debug,log} from '../utils/logger.js';
+import {debug,log,trace} from '../utils/logger.js';
 import {Data} from '../utils/data.js';
+import * as Utils from '../utils/utils.js';
 
 var router = express.Router();
 
 //
 // Keep allocations referenced so they aren't garbage collected.
 //
-const allocations = []; 
+var allocations = []; 
+var allocations500MB = []; 
 
 var allocatedMemory = null;
+var allocatedMemory500MB = null;
+
+var stopAllocatingMemory = false;
+
+const field = 'heapUsed';
+
+
+function getAllocatedMemoryGB()
+{
+    const mu = process.memoryUsage();
+    trace(mu);
+    const gb = mu[field] / 1024 / 1024 / 1024;
+    return gb;
+}
 
 //
 // Allocate a certain size to test if it can be done.
@@ -34,11 +50,7 @@ function alloc (size) {
 function allocToMax () {
 
     debug("Start allocating...");
-
-    const field = 'heapUsed';
-    const mu = process.memoryUsage();
-    debug(mu);
-    const gbStart = mu[field] / 1024 / 1024 / 1024;
+    const gbStart = getAllocatedMemoryGB();
     allocatedMemory = `Allocated ${Math.round(gbStart * 100) / 100} GB`
     log(allocatedMemory);
 
@@ -54,8 +66,7 @@ function allocToMax () {
         allocations.push(allocation);
 
         // Check how much memory is now allocated.
-        const mu = process.memoryUsage();
-        const mbNow = mu[field] / 1024 / 1024 / 1024;
+        const mbNow = getAllocatedMemoryGB()
 
         i = i + 1
 
@@ -64,7 +75,50 @@ function allocToMax () {
             allocatedMemory = `Allocated ${Math.round((mbNow - gbStart) * 100) / 100} GB`
             log(allocatedMemory);
         }
-        setTimeout(consumeMemory, 1);
+        if (stopAllocatingMemory == false)
+        {
+            setTimeout(consumeMemory, 1);
+        }
+    };
+
+    //start consuming memory
+    setTimeout(consumeMemory, 1);
+
+};
+
+function allocTo500MB () {
+
+    debug("Start allocating...");
+    const gbStart = getAllocatedMemoryGB()//mu[field] / 1024 / 1024 / 1024;
+    allocatedMemory500MB = `Allocated ${Math.round(gbStart * 100) / 100} GB`
+    log(allocatedMemory500MB);
+
+    let allocationStep = 200 * 1024;
+    var i = 0;
+
+    function consumeMemory()
+    {
+        // Allocate memory.
+        const allocation = alloc(allocationStep);
+
+        // Allocate and keep a reference so the allocated memory isn't garbage collected.
+        allocations500MB.push(allocation);
+
+        // Check how much memory is now allocated.
+        const mbNow = getAllocatedMemoryGB();
+
+        i = i + 1
+
+        if (i % 500 == 0)
+        {
+            allocatedMemory500MB = `Allocated ${Math.round((mbNow - gbStart) * 100) / 100} GB`
+            log(allocatedMemory500MB);
+        }
+        trace(`mbNow - gbStart ${mbNow - gbStart}`);
+        if ((mbNow - gbStart) < 0.5)
+        {
+            setTimeout(consumeMemory, 1);
+        }
     };
 
     //start consuming memory
@@ -73,22 +127,86 @@ function allocToMax () {
 };
 
 router.get('/', function(req, res) {
-    log(`Consuming memory...`);
+    const gbStart = getAllocatedMemoryGB();
+    var allocatedMemory = `Allocated ${Math.round(gbStart * 100) / 100} GB`
+
+    res.writeHead(200, {"Content-Type": "text/html"});
+    res.write(Utils.getPreHTML("allocated memory",allocatedMemory));
+    res.end();
+
+});
+
+router.get('/start', function(req, res) {
+    log(`Start consuming memory...`);
     if (allocatedMemory==null)
     {
+        stopAllocatingMemory = false;
         setTimeout(allocToMax, 10);
     }
-    res.writeHead(200, {"Content-Type": "text/plain"});
+    res.writeHead(200, {"Content-Type": "text/html"});
     if (allocatedMemory)
     {
-        res.write(allocatedMemory);
+        res.write(Utils.getPreHTML("allocated memory",allocatedMemory));
     }
     else
     {
-        res.write("Consumimg memory...");
+        res.write(Utils.getPreHTML("allocated memory","Consumimg memory..."));
     }
     res.end();
 
 });
 
-export { router};
+router.get('/stop', function(req, res) {
+    log(`Stop consuming memory...`);
+    stopAllocatingMemory = true;
+    const gbStart = getAllocatedMemoryGB();
+    var content = `Allocated ${Math.round(gbStart * 100) / 100} GB`
+    res.writeHead(200, {"Content-Type": "text/html"});
+    res.write(Utils.getPreHTML("allocated memory",content));
+    res.end();
+
+});
+
+
+
+router.get('/500mb', function(req, res) {
+    log(`Consuming memory to 500MB...`);
+    if (allocatedMemory500MB==null)
+    {
+        setTimeout(allocTo500MB, 10);
+    }
+    res.writeHead(200, {"Content-Type": "text/html"});
+    if (allocatedMemory500MB)
+    {
+        res.write(Utils.getPreHTML("allocated memory",allocatedMemory500MB));
+    }
+    else
+    {
+        res.write(Utils.getPreHTML("allocated memory","Consumimg memory..."));
+    }
+    res.end();
+
+});
+
+router.get('/free', function(req, res) {
+    debug(`Free allocated memory...`);
+    allocations = null; 
+    allocations500MB = null;
+    allocatedMemory = null;
+    allocatedMemory500MB = null;
+    allocations = []; 
+    allocations500MB = [];
+    debug("Calling GC...");
+    global.gc();
+
+    const gbStart = getAllocatedMemoryGB();
+    var content = `Allocated ${Math.round(gbStart * 100) / 100} GB`
+
+    res.writeHead(200, {"Content-Type": "text/html"});
+    res.write(Utils.getPreHTML("free allocated memory",content));
+    res.end();
+
+});
+
+
+export { router };
