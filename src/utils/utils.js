@@ -1,5 +1,25 @@
 import {Data} from '../utils/data.js';
 
+function getInstanaIntegration()
+{
+    //http://instana.forum.fi.ibm.com:2999
+    //sCxck5r4TIKb3mGXIkHE_g
+    var instanaHtml = "";
+    if (process.env.INSTANA_URL && process.env.INSTANA_KEY)
+    {
+        instanaHtml = `<script>
+(function(s,t,a,n){s[t]||(s[t]=a,n=s[a]=function(){n.q.push(arguments)},
+n.q=[],n.v=2,n.l=1*new Date)})(window,"InstanaEumObject","ineum");
+      
+ineum('reportingUrl', '${process.env.INSTANA_URL}');
+ineum('key', '${process.env.INSTANA_KEY}');
+ineum('trackSessions');
+</script>
+<script defer crossorigin="anonymous" src="${process.env.INSTANA_URL}/eum.min.js"></script>`;
+    }
+    return instanaHtml;
+}
+
 function getCSSStyle()
 {
     const css=`<style>
@@ -60,6 +80,7 @@ function getHtmlHeader(title)
   <meta charset="UTF-8"/>
   <title>${Data.state.appName} - ${title}</title>
   ${getCSSStyle()}
+  ${getInstanaIntegration()}
 </head>
 <body>
 ${getEndpointLinks()}
