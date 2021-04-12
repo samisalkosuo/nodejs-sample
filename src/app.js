@@ -84,6 +84,9 @@ app.use('/systeminfo', systeminfo);
 import {router as error} from './routes/error.js';
 app.use('/error', error);
 
+import {router as notfound} from './routes/notfound.js';
+app.use('/notfound', notfound);
+
 import {router as endpoints} from './routes/endpoints.js';
 app.use('/endpoints', endpoints);
 
