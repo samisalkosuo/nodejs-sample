@@ -81,6 +81,9 @@ app.use('/env', env);
 import {router as systeminfo} from './routes/systemInfo.js';
 app.use('/systeminfo', systeminfo);
 
+import {router as error} from './routes/error.js';
+app.use('/error', error);
+
 import {router as endpoints} from './routes/endpoints.js';
 app.use('/endpoints', endpoints);
 
