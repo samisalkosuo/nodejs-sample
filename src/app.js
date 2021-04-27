@@ -1,13 +1,9 @@
 //------------------------------------------------------------------------------
 // node.js  application 
 //------------------------------------------------------------------------------
-import { createRequire } from 'module';
-if (process.env.DISABLE_INSTANA == undefined) {
-    const require = createRequire(import.meta.url);
-    //require instana before importing anything else
-    require('@instana/collector')();
-}
-
+import instana from '@instana/collector';
+// You need to call the exported function *immediately*, before importing anything else.
+instana();
 
 // This application uses express as its web server
 // for more info, see: http://expressjs.com

@@ -4,16 +4,20 @@ ENV HEAP_SIZE 2048
 
 # Create user and change workdir
 RUN adduser --disabled-password --home /app user
+
+#create data directory
+RUN mkdir -p /data && chown user:user /data
+
 WORKDIR "/app"
 
 #sets the directory and file permissions to allow users in the root group to access them (OpenShift)
-RUN chgrp -R 0 /app && chmod -R g=u /app
-
+RUN chgrp -R 0 /app && chmod -R g=u /app && chgrp -R 0 /data && chmod -R g=u /data
 
 COPY src/package.json .
 #install dependencies
 RUN npm install
 
+#npm install --save @instana/collector
 #add app code
 COPY src/ .
 
@@ -24,6 +28,5 @@ USER user
 #app uses this port
 EXPOSE 8080
 
-
 #CMD /bin/sh
-CMD ["sh", "-c", "NPROC=$(nproc) node --expose-gc --max-old-space-size=${HEAP_SIZE} app.js"]
+CMD ["sh", "-c", "/app/run_app.sh"]
