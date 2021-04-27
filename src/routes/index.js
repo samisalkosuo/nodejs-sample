@@ -43,8 +43,35 @@ function getEndPoints(req)
             });
         });
         endpoints.sort();
+        var endpointSubPaths = [];
+        var ej2 = endpointJson;
+        endpointJson.forEach(endpoint => {
+            let pathStr = JSON.stringify(endpoint.path).replaceAll("\"","");
+            ej2.forEach(endpoint2 => {
+                let pathStr2 = JSON.stringify(endpoint2.path).replaceAll("\"","");
+                if (pathStr2.lastIndexOf(pathStr) > 0)
+                {
+                    if (pathStr2.startsWith(pathStr) )
+                    {
+                        endpointSubPaths.push(pathStr2);
+                        //console.log(pathStr2);
+                    }
+    
+                }
+        });
+        });
+        debug(endpointSubPaths);
+
+        //remove subpaths from links (subpaths like /consumecpu/start)
+        endpointSubPaths.forEach(subpath => {
+            endpoints = endpoints.filter(item => item.indexOf(subpath) == -1 )
+
+        });
+
+        Data.setState({ endpointsubpaths: endpointSubPaths });
         Data.setState({ endpointlinks: endpoints });
     }
+
 
 }
 

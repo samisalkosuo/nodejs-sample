@@ -8,7 +8,10 @@ var router = express.Router();
 //common routes for all requests
 
 router.use(function (req, res, next) { 
-  
+
+  //add url to state, used to check navigation links
+  Data.setState({ requestpath: req.originalUrl });
+
   trace("request URL",req.get('host'), req.method, req.originalUrl);
   next();
 })

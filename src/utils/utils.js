@@ -1,4 +1,5 @@
 import {Data} from '../utils/data.js';
+import { debug } from './logger.js';
 
 function getInstanaIntegration()
 {
@@ -69,6 +70,48 @@ function getEndpointLinks()
         linkHtml = linkHtml + "</tr></table>"
     }
 
+    //add sub navigation
+    var currentUrl = Data.state.requestpath
+    linkHtml = `${linkHtml}
+    <p>`;
+    if (currentUrl != null && currentUrl != "/" )
+    {
+        var paths = [];
+        debug(`currentUrl: ${currentUrl}`);
+        if (currentUrl.lastIndexOf("/") > 0)
+        {
+            debug(`currentUrl.indexOf("/",1): ${currentUrl.indexOf("/",1)}`);
+            currentUrl = currentUrl.substring(0,currentUrl.indexOf("/",1));
+        }
+        paths.push(currentUrl);
+
+        Data.state.endpointsubpaths.forEach(path => {
+            if (path.indexOf(currentUrl) == 0)
+            {
+                paths.push(path);
+            }
+        });
+        
+        if (paths.length > 1)
+        {
+            paths.forEach(path => {
+
+                var pathToShow = path;
+                if (path.lastIndexOf("/") > 0)
+                {
+                    pathToShow = path.replaceAll(currentUrl,"");
+                }
+                debug(`pathToShow: ${pathToShow}`);
+
+                linkHtml = `${linkHtml} <a href="${path}">${pathToShow}</a>`;
+    
+            });    
+        }
+
+    }
+    linkHtml = `${linkHtml}
+    </p>`;
+    
     return linkHtml;
 }
 
