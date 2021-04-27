@@ -23,9 +23,11 @@ COPY src/ .
 
 RUN date -R > buildtime.txt
 
-#add ownership
+#change ownership of /app directory
 RUN chown -R user:user /app
+RUN chmod 755 /app/run_app.sh
 
+#use user
 USER user
 
 #app uses this port
