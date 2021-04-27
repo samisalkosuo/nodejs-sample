@@ -23,6 +23,9 @@ COPY src/ .
 
 RUN date -R > buildtime.txt
 
+#add ownership
+RUN chown -R user:user /app
+
 USER user
 
 #app uses this port
