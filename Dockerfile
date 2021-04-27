@@ -11,7 +11,7 @@ RUN mkdir -p /data && chown user:user /data
 WORKDIR "/app"
 
 #sets the directory and file permissions to allow users in the root group to access them (OpenShift)
-RUN chgrp -R 0 /app && chmod -R g=u /app && chgrp -R 0 /data && chmod -R g=u /data
+RUN chown -R user:user /app && chgrp -R 0 /app && chmod -R g=u /app && chgrp -R 0 /data && chmod -R g=u /data
 
 COPY src/package.json .
 #install dependencies
@@ -21,11 +21,9 @@ RUN npm install
 #add app code
 COPY src/ .
 
-RUN date -R > buildtime.txt
-
-#change ownership of /app directory
-RUN chown -R user:user /app
 RUN chmod 755 /app/run_app.sh
+
+RUN date -R > buildtime.txt
 
 #use user
 USER user
