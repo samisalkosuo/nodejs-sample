@@ -1,6 +1,12 @@
 //------------------------------------------------------------------------------
 // node.js  application 
 //------------------------------------------------------------------------------
+import { createRequire } from 'module';
+if (process.env.DISABLE_INSTANA == undefined) {
+    const require = createRequire(import.meta.url);
+    //require instana before importing anything else
+    require('@instana/collector')();
+}
 
 
 // This application uses express as its web server
