@@ -6,6 +6,9 @@ env.properties
 TODO*
 API_KEY.txt
 demo/
+/scripts/
+src/node_modules/
+Dockerfile_dev
 
 # dependencies
 /node_modules
