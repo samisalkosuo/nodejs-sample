@@ -1,9 +1,6 @@
 //------------------------------------------------------------------------------
 // node.js  application 
 //------------------------------------------------------------------------------
-import instana from '@instana/collector';
-// You need to call the exported function *immediately*, before importing anything else.
-instana();
 
 // This application uses express as its web server
 // for more info, see: http://expressjs.com
