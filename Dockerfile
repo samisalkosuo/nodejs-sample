@@ -8,11 +8,6 @@ RUN mkdir -p /data
 WORKDIR "/app"
 
 
-#sets the directory and file permissions to allow users in the root group to access them
-#for OpenShift
-RUN chgrp -R 0 /app && chmod -R g=u /app && chgrp -R 0 /data && chmod -R g=u /data
-
-
 COPY src/package.json .
 #install dependencies
 RUN npm install
@@ -27,6 +22,10 @@ RUN date -R > buildtime.txt
 
 #app uses this port
 EXPOSE 8080
+
+#sets the directory and file permissions to allow users in the root group to access them
+#for OpenShift
+RUN chgrp -R 0 /app && chmod -R g=u /app && chgrp -R 0 /data && chmod -R g=u /data
 
 #CMD /bin/sh
 CMD ["sh", "-c", "/app/run_app.sh"]
