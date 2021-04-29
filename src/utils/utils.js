@@ -1,3 +1,7 @@
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const http = require('http');
+
 import {Data} from '../utils/data.js';
 import { debug } from './logger.js';
 
@@ -182,4 +186,30 @@ export function formatBytes(bytes, decimals = 2) {
     const i = Math.floor(Math.log(bytes) / Math.log(k));
 
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+
+export function httpPostJSONData({body, ...options}) {
+    return new Promise((resolve,reject) => {
+        const req = http.request({
+            method: 'POST',
+            ...options,
+        }, res => {
+            const chunks = [];
+            res.on('data', data => chunks.push(data))
+            res.on('end', () => {
+                let body = Buffer.concat(chunks);
+                switch(res.headers['content-type']) {
+                    case 'application/json':
+                        body = JSON.parse(body);
+                        break;
+                }
+                resolve(body)
+            })
+        })
+        req.on('error',reject);
+        if(body) {
+            req.write(body);
+        }
+        req.end();
+    })
 }
