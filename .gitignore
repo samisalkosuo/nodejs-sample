@@ -7,6 +7,7 @@ TODO*
 API_KEY.txt
 demo/
 /scripts/
+src/package-lock.json
 src/node_modules/
 Dockerfile_dev
 

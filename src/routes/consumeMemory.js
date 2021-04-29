@@ -77,7 +77,7 @@ function allocToMax () {
         }
         if (stopAllocatingMemory == false)
         {
-            setTimeout(consumeMemory, 1);
+            setTimeout(consumeMemory, 100);
         }
     };
 
