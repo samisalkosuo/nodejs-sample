@@ -18,7 +18,8 @@ var allocations500MB = [];
 var allocatedMemory = null;
 var allocatedMemory500MB = null;
 
-var stopAllocatingMemory = false;
+//var stopAllocatingMemory = false;
+var isAllocatingMemory = false;
 
 const field = 'heapUsed';
 
@@ -54,7 +55,7 @@ function allocToMax () {
     allocatedMemory = `Allocated ${Math.round(gbStart * 100) / 100} GB`
     log(allocatedMemory);
 
-    let allocationStep = 200 * 1024;
+    let allocationStep = 1024 * 1024;
     var i = 0;
 
     function consumeMemory()
@@ -75,9 +76,10 @@ function allocToMax () {
             allocatedMemory = `Allocated ${Math.round((mbNow - gbStart) * 100) / 100} GB`
             log(allocatedMemory);
         }
-        if (stopAllocatingMemory == false)
+        //if (stopAllocatingMemory == false)
+        if (isAllocatingMemory == true)
         {
-            setTimeout(consumeMemory, 100);
+            setTimeout(consumeMemory, 1);
         }
     };
 
@@ -93,7 +95,7 @@ function allocTo500MB () {
     allocatedMemory500MB = `Allocated ${Math.round(gbStart * 100) / 100} GB`
     log(allocatedMemory500MB);
 
-    let allocationStep = 200 * 1024;
+    let allocationStep = 1024 * 1024;
     var i = 0;
 
     function consumeMemory()
@@ -119,6 +121,11 @@ function allocTo500MB () {
         {
             setTimeout(consumeMemory, 1);
         }
+        else
+        {
+            isAllocatingMemory = false;
+
+        }
     };
 
     //start consuming memory
@@ -131,41 +138,38 @@ router.get('/', function(req, res) {
     var allocatedMemory = `Allocated ${Math.round(gbStart * 100) / 100} GB`
 
     res.writeHead(200, {"Content-Type": "text/html"});
-    res.write(Utils.getPreHTML("allocated memory",allocatedMemory));
+    var html=Utils.getHTML("Allocated memory",`<h2>Allocated memory</h2>
+        <p>
+        Allocating memory: ${isAllocatingMemory}
+        </p>
+        <p>
+        ${allocatedMemory}
+        </p>
+        <p>
+        ${new Date().toISOString()}
+        </p>        
+    `);
+    res.write(html);
     res.end();
 
 });
 
 router.get('/start', function(req, res) {
     log(`Start consuming memory...`);
-    if (allocatedMemory == null || stopAllocatingMemory == true)
+
+    if (isAllocatingMemory == false)
     {
-        stopAllocatingMemory = false;
+        isAllocatingMemory = true;
         setTimeout(allocToMax, 10);
-    }
 
-    res.writeHead(200, {"Content-Type": "text/html"});
-    if (allocatedMemory)
-    {
-        res.write(Utils.getPreHTML("allocated memory",allocatedMemory));
     }
-    else
-    {
-        res.write(Utils.getPreHTML("allocated memory","Consumimg memory..."));
-    }
-    res.end();
-
+    res.redirect(req.baseUrl);
 });
 
 router.get('/stop', function(req, res) {
     log(`Stop consuming memory...`);
-    stopAllocatingMemory = true;
-    const gbStart = getAllocatedMemoryGB();
-    var content = `Allocated ${Math.round(gbStart * 100) / 100} GB`
-    res.writeHead(200, {"Content-Type": "text/html"});
-    res.write(Utils.getPreHTML("allocated memory",content));
-    res.end();
-
+    isAllocatingMemory = false;
+    res.redirect(req.baseUrl);
 });
 
 
@@ -174,19 +178,10 @@ router.get('/500mb', function(req, res) {
     log(`Consuming memory to 500MB...`);
     if (allocatedMemory500MB==null)
     {
+        isAllocatingMemory = true;
         setTimeout(allocTo500MB, 10);
     }
-    res.writeHead(200, {"Content-Type": "text/html"});
-    if (allocatedMemory500MB)
-    {
-        res.write(Utils.getPreHTML("allocated memory",allocatedMemory500MB));
-    }
-    else
-    {
-        res.write(Utils.getPreHTML("allocated memory","Consumimg memory..."));
-    }
-    res.end();
-
+    res.redirect(req.baseUrl);
 });
 
 router.get('/free', function(req, res) {
@@ -200,13 +195,7 @@ router.get('/free', function(req, res) {
     debug("Calling GC...");
     global.gc();
 
-    const gbStart = getAllocatedMemoryGB();
-    var content = `Allocated ${Math.round(gbStart * 100) / 100} GB`
-
-    res.writeHead(200, {"Content-Type": "text/html"});
-    res.write(Utils.getPreHTML("free allocated memory",content));
-    res.end();
-
+    res.redirect(req.baseUrl);
 });
 
 
