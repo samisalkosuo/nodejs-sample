@@ -23,60 +23,41 @@ async function consumeCPU() {
   };
 };
 
+async function consumeCPUStop() {
+    try {
+        const { stdout, stderr } = await exec('sh ./scripts/consume_cpu_stop.sh');
+    }catch (err) {
+       error(err);
+    };
+  };
+  
 async function getTop()
 {
     const { stdout, stderr } = await exec('top -b -n 1');
     return stdout;
 }
 
-async function topCPU(res) {
-    try {
+router.get('/', async function(req, res) {
+    try{
         const top = await getTop();
+        var html = Utils.getHTML(`Consume CPU`,`
+        <h2>Consume CPU</h2>
+        <p>Consuming CPU: ${consumeCPUStarted}</p>
+        <p>Currently running processes:</p>
+        <pre>
+${top}
+        </pre>
+            `);
         res.writeHead(200, {"Content-Type": "text/html"});
-        res.write(`${Utils.getPreHTML("top",top)}`);
-        res.end();
-    }catch (err) {
-       error(err);
-       res.writeHead(500, {"Content-Type": "text/plain"});
-       res.write(`${err}`);
-       res.end();
-   };
-  };
+        res.write(html);
+        res.end(); 
 
-async function startConsumeCPU(res) {
-    try {
-        consumeCPUStarted = true;
-        consumeCPU();
-        const content = "Consumimg all available CPU...";
-        const top = await getTop();
-        res.writeHead(200, {"Content-Type": "text/html"});
-        res.write(`${Utils.getPreHTML("start consume CPU",`${content}\n\n${top}`)}`);
-        res.end();
     }catch (err) {
-       error(err);
-       res.writeHead(500, {"Content-Type": "text/plain"});
-       res.write(`${err}`);
-       res.end();
-   };
-  };
-
-async function stopConsumeCPU(res) {
-    try {
-        const { stdout, stderr } = await exec('sh ./scripts/consume_cpu_stop.sh');
-        const top = await getTop();
-        res.writeHead(200, {"Content-Type": "text/html"});        
-        res.write(`${Utils.getPreHTML("stop consume CPU",`${stdout}\n\n${top}`)}`);
-        res.end();
-    }catch (err) {
-       error(err);
-       res.writeHead(500, {"Content-Type": "text/plain"});
-       res.write(`${err}`);
-       res.end();
-   };
-  };
-
-router.get('/', function(req, res) {
-    topCPU(res);
+    error(err);
+    res.writeHead(500, {"Content-Type": "text/plain"});
+    res.write(`${err}`);
+    res.end();
+};
 });
 
 router.get('/start', function(req, res) {
@@ -84,17 +65,18 @@ router.get('/start', function(req, res) {
     if (consumeCPUStarted == false)
     {
         consumeCPUStarted = true;
-        startConsumeCPU(res);
+        consumeCPU();
     }
-    else
-    {
-        topCPU(res);
-    }
+    res.redirect(req.baseUrl);
 });
 
 router.get('/stop', function(req, res) {
-    consumeCPUStarted = false;
-    stopConsumeCPU(res);
+    if (consumeCPUStarted == true)
+    {
+        consumeCPUStarted = false;
+        consumeCPUStop();
+    }
+    res.redirect(req.baseUrl);
 });
 
 export { router};

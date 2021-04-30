@@ -11,9 +11,16 @@ router.get('/', function (req, res) {
     Object.entries(process.env).forEach(([key, value]) => {
         variables = variables + `${key}=${value}\n`
      });    
-     res.writeHead(200, {"Content-Type": "text/html"});
-     const html = Utils.getPreHTML("Environment variables",`${variables}`);
-     res.write(html);
+     //const html = Utils.getPreHTML("Environment variables",`${variables}`);
+     var html = Utils.getHTML(`Environment variables`,`
+     <h2>Environment variables</h2>
+     <pre>
+${variables}
+     </pre>
+         `);
+ 
+    res.writeHead(200, {"Content-Type": "text/html"});
+    res.write(html);
      res.end();
 
 })

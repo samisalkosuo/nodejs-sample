@@ -40,13 +40,17 @@ router.get('/', function(req, res) {
     let elapsedSecs = (endTime - startTime)/1000.0;
 
     log(`Calculating ${digits} digits of pi...done.`);
+    var html = Utils.getHTML(`PI ${digits} digits`,`
+    <h2>PI - ${digits} digits</h2>
+    <p>
+    Calculated in ${elapsedSecs} seconds.
+    </p>
+    <pre>
+    ${piDigits}
+    </pre>
+        `);
     res.writeHead(200, {"Content-Type": "text/html"});
-    var content = `${digits} digits of Pi calculated in ${elapsedSecs} seconds:
-
-${piDigits}`;
-    
-    //res.write(`${digits} digits of Pi calculated in ${elapsedSecs} seconds:\n\n`, "utf-8");
-    res.write(`${Utils.getPreHTML(`PI ${digits} digits`,content)}`, "utf-8");
+    res.write(html);
     res.end(); 
 
 });
