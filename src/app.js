@@ -59,8 +59,8 @@ app.use('/metrics', metrics);
 import {router as test} from './routes/test.js';
 app.use('/test', test);
 
-import {router as hangserver} from './routes/hangServer.js';
-app.use('/hangserver', hangserver);
+import {router as disruptserver} from './routes/disrupt.js';
+app.use('/disrupt', disruptserver);
 
 import {router as consumememory} from './routes/consumeMemory.js';
 app.use('/consumememory', consumememory);
@@ -70,9 +70,6 @@ app.use('/consumecpu', consumecpu);
 
 import {router as calculatepi} from './routes/calculatePi.js';
 app.use('/calculatepi', calculatepi);
-
-import {router as killserver} from './routes/killServer.js';
-app.use('/killserver', killserver);
 
 import {router as env} from './routes/environment.js';
 app.use('/env', env);
