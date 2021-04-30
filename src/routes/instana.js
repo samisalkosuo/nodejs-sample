@@ -79,12 +79,13 @@ router.get('/', function(req, res, next) {
 router.get('/incident-enable', function(req, res, next) {
     Data.setState({ instanaincident: true });
     startIncident();
-    next();
+
+    res.redirect(req.baseUrl);
 });
 
 router.get('/incident-disable', function(req, res, next) {
     Data.setState({ instanaincident: false });
-    next();
+    res.redirect(req.baseUrl);
 });
 
 
@@ -151,15 +152,14 @@ router.use(function (req, res, next) {
         Critical events sent: ${eventSentCritical}<br/>
         </p>
         <p>
-        Events sent to <a href="https://www.instana.com/docs/api/agent" target="_blank">Instana agent REST API</a>:<br/>
-        <a href="http://${agentHost}:${agentPort}${agentPath}">http://${agentHost}:${agentPort}${agentPath}</a>
+        Events sent to <a href="https://www.instana.com/docs/api/agent" target="_blank">Instana agent REST API</a>.<br/>
+        Default agent REEST API URL:http://${agentHost}:${agentPort}${agentPath}
         </p>
         <p>
         ${new Date().toISOString()}
         </p>
 
-        `);
-        
+        `);    
     next();
 });
 
