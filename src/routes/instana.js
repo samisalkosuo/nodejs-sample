@@ -153,7 +153,7 @@ router.use(function (req, res, next) {
         </p>
         <p>
         Events sent to <a href="https://www.instana.com/docs/api/agent" target="_blank">Instana agent REST API</a>.<br/>
-        Default agent REEST API URL:http://${agentHost}:${agentPort}${agentPath}
+        Default agent REST API URL: <i>http://${agentHost}:${agentPort}${agentPath}</i>
         </p>
         <p>
         ${new Date().toISOString()}
