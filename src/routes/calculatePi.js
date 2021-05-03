@@ -25,7 +25,7 @@ function calculatePiDigits(digits)
 }
 
 router.get('/', function(req, res) {
-    log(`Calculating pi...`);
+    debug(`Calculating pi...`);
     Data.setState ({ calculatePiRequests: Data.state.calculatePiRequests + 1 }) 
     var digits = BigInt(Utils.getRndInteger(31,20000));
     debug(`req.query.digits: ${req.query.digits}`);
