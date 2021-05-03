@@ -93,7 +93,7 @@ router.get('/send-event-change', function(req, res, next) {
 
     res.locals.title="Node.js Change Event";
     res.locals.text="Change event in node-js sample application";
-    res.locals.severity=SEVERITY_WARNING;
+    res.locals.severity=SEVERITY_CHANGE;
     eventsSentChange = eventsSentChange + 1;
     res.locals.eventsSent = eventsSentChange;
     res.locals.eventType = "change";

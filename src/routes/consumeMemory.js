@@ -23,6 +23,7 @@ var isAllocatingMemory = false;
 
 const field = 'heapUsed';
 
+let allocationStep = 333 * 1024;
 
 function getAllocatedMemoryGB()
 {
@@ -55,7 +56,6 @@ function allocToMax () {
     allocatedMemory = `Allocated ${Math.round(gbStart * 100) / 100} GB`
     log(allocatedMemory);
 
-    let allocationStep = 1024 * 1024;
     var i = 0;
 
     function consumeMemory()
@@ -95,7 +95,6 @@ function allocTo500MB () {
     allocatedMemory500MB = `Allocated ${Math.round(gbStart * 100) / 100} GB`
     log(allocatedMemory500MB);
 
-    let allocationStep = 1024 * 1024;
     var i = 0;
 
     function consumeMemory()

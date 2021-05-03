@@ -33,13 +33,13 @@ router.get('/', function(req, res) {
     {
         digits = BigInt(req.query.digits);
     }
-    log(`Calculating ${digits} digits of pi...`);
+    debug(`Calculating ${digits} digits of pi...`);
     let startTime = Date.now();
     let piDigits = calculatePiDigits(digits);
     let endTime = Date.now();
     let elapsedSecs = (endTime - startTime)/1000.0;
 
-    log(`Calculating ${digits} digits of pi...done.`);
+    debug(`Calculating ${digits} digits of pi...done.`);
     var html = Utils.getHTML(`PI ${digits} digits`,`
     <h2>PI - ${digits} digits</h2>
     <p>
