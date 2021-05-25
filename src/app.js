@@ -2,6 +2,13 @@
 // node.js  application 
 //------------------------------------------------------------------------------
 
+// enable install locally, without docker
+// execute: npm install --save @instana/collector
+// uncomment following two lines
+//import instana from '@instana/collector';
+//instana();// You need to call the exported function *immediately*, before importing anything else.
+
+
 // This application uses express as its web server
 // for more info, see: http://expressjs.com
 import express from 'express';
@@ -39,6 +46,9 @@ catch(e) {
     //ignore any errors while reading file, it's not so important
     Data.setState ({ buildTime: "N/A" }) 
 }
+
+//set log entry data variable
+Data.setState ({ logEntries: [] }) ;
 
 // create a new express server
 var app = express();
@@ -83,8 +93,14 @@ app.use('/error', error);
 import {router as notfound} from './routes/notfound.js';
 app.use('/notfound', notfound);
 
-import {router as instana} from './routes/instana.js';
-app.use('/instana', instana);
+import {router as instanaintegration} from './routes/instana.js';
+app.use('/instana', instanaintegration);
+
+import {router as file} from './routes/file.js';
+app.use('/file', file);
+
+import {router as logapi} from './routes/logapi.js';
+app.use('/logapi', logapi);
 
 import {router as endpoints} from './routes/endpoints.js';
 app.use('/endpoints', endpoints);

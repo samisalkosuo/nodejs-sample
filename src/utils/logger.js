@@ -1,3 +1,5 @@
+import {Data} from '../utils/data.js';
+
 function getString(argArray) {
     //if argArray includes only string, return as it is
     //otherwise prettypring array objects
@@ -16,11 +18,31 @@ function getString(argArray) {
     return argArray
 }
 
+function addLogEntry(msg)
+{
+    if (process.env.LOGAPI_ENABLED) {
+        var logEntries = Data.state.logEntries
+        let entry= {
+            "@timestamp": Date.now(),
+            application: Data.state.appName,
+            "@rawstring": msg
+        };
+        logEntries.push(entry);
+        Data.setState ({ logEntries: logEntries }) ;
+    }
+}
+
 export function debug(...args) {
     if (process.env.DEBUG) {
         let now = (new Date()).toISOString();
         console.log(`${now} DEBUG `, getString(args));
     }
+
+
+};
+
+export function logapi_log(...args) {
+    addLogEntry(`${getString(args).join(" ")}`)
 };
 
 export function trace(...args) {
@@ -39,4 +61,5 @@ export function log(...args) {
 export function error(...args) {
     let now = (new Date()).toISOString();
     console.log(`${now} ERROR `, getString(args));
+    addLogEntry(`ERROR ${getString(args).join(" ")}`)
 };

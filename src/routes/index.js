@@ -18,8 +18,10 @@ function getHTML() {
 <a href="/endpoints">Endpoints</a><br/>
 <br/>
 <p>
-Current time UTC: ${now}<br/>
 Build time: ${Data.state.buildTime}
+</p>
+<p>
+Current time UTC: ${now}<br/>
 </p>
 `;
     return Utils.getHTML("home",html);

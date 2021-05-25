@@ -3,7 +3,7 @@ const require = createRequire(import.meta.url);
 const all_routes = require('express-list-endpoints');
 
 import express from 'express';
-import {debug, trace} from '../utils/logger.js';
+import {debug, trace, logapi_log} from '../utils/logger.js';
 import {Data} from '../utils/data.js';
 
 
@@ -56,6 +56,7 @@ router.use(function (req, res, next) {
   Data.setState({ requestpath: req.originalUrl });
 
   trace("request URL",req.get('host'), req.method, req.originalUrl);
+  logapi_log("request URL", req.method, req.originalUrl);
   next();
 })
 
