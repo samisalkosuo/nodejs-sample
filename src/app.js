@@ -100,7 +100,7 @@ import {router as file} from './routes/file.js';
 app.use('/file', file);
 
 import {router as logapi} from './routes/logapi.js';
-app.use('/logapi', logapi);
+app.use('/logging', logapi);
 
 import {router as endpoints} from './routes/endpoints.js';
 app.use('/endpoints', endpoints);
