@@ -19,13 +19,21 @@ const options = {
 const ingestionKey = process.env.LOGDNA_INGESTION_KEY ? process.env.LOGDNA_INGESTION_KEY : "na";
 const LOGDNALOGGER = logdna.createLogger(ingestionKey, options)
 var logDNAEnabled = ingestionKey=="na" ? false: true;
+const sendLogs_LogDNA_always = process.env.LOGDNA_SEND_ALWAYS ? true : false;
 
 var lastLogRetrievedTimestamp = "";
 var totalLogRetrievals = 0;
 var logApiEnabled = process.env.LOGAPI_ENABLED ? true: false;
 
-var sendlogs_LogDNA = false;
+var sendlogs_LogDNA = false || sendLogs_LogDNA_always;
 var sendErrors_LogDNA = false;
+
+if (logDNAEnabled == true && sendlogs_LogDNA == true)
+{
+    //start sending log entries to logdna
+    setTimeout(sendLogEntriesToLogDNA, 1);
+}
+
 
 let logMessages = [ "Customer detail found.",
                     "Ticket was purchased.",
