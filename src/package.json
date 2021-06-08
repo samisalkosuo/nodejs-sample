@@ -7,10 +7,10 @@
         "start": "node app.js"
     },
     "dependencies": {
-        "@instana/collector": "^1.121.0",
+        "@instana/collector": "^1.124.0",
+        "@logdna/logger": "2.3.2",
         "express": "4.17.1",
         "express-list-endpoints": "5.0.0",
-        "systeminformation": "5.7.1",
-        "@logdna/logger": "2.3.2"
+        "systeminformation": "5.7.4"
     }
 }

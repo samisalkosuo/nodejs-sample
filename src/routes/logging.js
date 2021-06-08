@@ -13,7 +13,7 @@ var router = express.Router();
 const logdna = require('@logdna/logger')
 
 const options = {
-  app: Data.state.appName
+  app: `${Data.state.appName}`
 , level: 'info' // set a default for when level is not provided in function calls
 }
 const ingestionKey = process.env.LOGDNA_INGESTION_KEY ? process.env.LOGDNA_INGESTION_KEY : "na";
@@ -27,6 +27,8 @@ var logApiEnabled = process.env.LOGAPI_ENABLED ? true: false;
 
 var sendlogs_LogDNA = false || sendLogs_LogDNA_always;
 var sendErrors_LogDNA = false;
+var sendlogs_LogDNA_started = null;
+var sendErrors_LogDNA_started = null;
 
 if (logDNAEnabled == true && sendlogs_LogDNA == true)
 {
@@ -109,12 +111,14 @@ function getHTML() {
     else
     {
         //set logDNA info
+        var startedLogsTime = sendlogs_LogDNA_started == null ? "" : `(started ${sendlogs_LogDNA_started})`;
+        var startedErrorsTime = sendErrors_LogDNA_started == null ? "" : `(started ${sendErrors_LogDNA_started})`;
         logDNAHtml = `<p>
         LogDNA is enabled.
         <br/>
-        Sending logs to LogDNA: ${sendlogs_LogDNA}
+        Sending logs to LogDNA: ${sendlogs_LogDNA} ${startedLogsTime}
         <br/>
-        Sending errors to LogDNA: ${sendErrors_LogDNA}
+        Sending errors to LogDNA: ${sendErrors_LogDNA} ${startedErrorsTime}
         </p>
         `;
     }
@@ -174,8 +178,9 @@ router.get('/logentries', function (req, res) {
 router.get('/logdna/start', function (req, res) {
 
     debug(`logDNAEnabled: ${logDNAEnabled}`);
-    if (logDNAEnabled == true)
+    if (logDNAEnabled == true && sendlogs_LogDNA == false)
     {
+        sendlogs_LogDNA_started = new Date().toISOString();
         //start sending log entries to logdna
         sendlogs_LogDNA = true;
         setTimeout(sendLogEntriesToLogDNA, 1);
@@ -189,14 +194,16 @@ router.get('/logdna/stop', function (req, res) {
     {
         //stop sending log entries to logdna
         sendlogs_LogDNA = false;
+        sendlogs_LogDNA_started = null;
     }
     res.redirect(req.baseUrl);
 });
 
 router.get('/logdna/errors/start', function (req, res) {
 
-    if (logDNAEnabled == true)
+    if (logDNAEnabled == true && sendErrors_LogDNA == false)
     {
+        sendErrors_LogDNA_started = new Date().toISOString();
         //start sending log entries to logdna
         sendErrors_LogDNA = true;
         setTimeout(sendErrorEntriesToLogDNA, 1);
@@ -210,6 +217,7 @@ router.get('/logdna/errors/stop', function (req, res) {
     {
         //stop sending log entries to logdna
         sendErrors_LogDNA = false;
+        sendErrors_LogDNA_started = null;
     }
     res.redirect(req.baseUrl);
 });

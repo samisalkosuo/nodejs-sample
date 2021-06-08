@@ -3,7 +3,10 @@
 
 Node.js sample application. Developed to be used with OpenShift and other Kubernetes platforms, but can be used without Kubernetes.
 
-== Local
+
+== Gettings started 
+
+=== Local
 
 * Build:
 ** `docker build -t nodejssample .`
@@ -12,7 +15,7 @@ Node.js sample application. Developed to be used with OpenShift and other Kubern
 * Run in background:
 ** `docker run -d --name nodejssample -p 8080:8080 nodejssample`
 
-== Docker Hub
+=== Docker Hub
 
 This is available from Docker Hub: https://hub.docker.com/r/kazhar/nodejs-sample.
 
@@ -21,15 +24,15 @@ This is available from Docker Hub: https://hub.docker.com/r/kazhar/nodejs-sample
 * Run:
 ** `docker run -it --rm -p 8080:8080 kazhar/nodejs-sample`
 
-== Environment variables
+Environment variables include:
 
 * `DEBUG=true` - print debug stuff.
 * `APP_NAME=appname` - set application name.
 * `HEAP_SIZE=8182` - set node.js heap size, in MB.
 
-== OpenShift
+=== OpenShift
 
-=== Deploy application
+==== Deploy application
 
 Application can be deployed from container image or directly from (GitHub) source. The Container image may be given as tar-file (for example: _nodejssample.tar.gz_) or it is available from registry.
 
@@ -53,20 +56,20 @@ Here we create image directly from GitHub source.
 ** `oc delete all -l app=nodeapp`
 ** Deletes all resources that have the specified label.
 
-=== Set health check
+==== Set health check
 
 Using OpenShift 4.6.19, health check can not be added from command line. See documentation to add health checks: https://docs.openshift.com/container-platform/4.6/applications/application-health.html.
 
 It is good practice to add health check to all applications.
 
-=== Set requests and limits
+==== Set requests and limits
 
 When deploying application from source code, requests/limits are not set for pods. It is good practice to include them.
 
 * Set resource requests/limits:
 ** `oc set resources deployment nodeapp --requests cpu=100m,memory=256Mi --limits cpu=500m,memory=1024Mi`
 
-==== Secure route
+===== Secure route
 
 The default OCP route is unsecured and does not accept TLS. This is the case at the time of writing and OCP version 4.6.19.
 
@@ -74,7 +77,7 @@ The default OCP route is unsecured and does not accept TLS. This is the case at 
 * Or you can use existing ingress certificate by patching route to set termination to edge and redirect if using plain http:
 ** `oc patch route nodeapp -p '{"spec":{"tls":{"insecureEdgeTerminationPolicy":"Redirect","termination":"edge"}}}'`
 
-==== Update deployment
+===== Update deployment
 
 * Since deployment was created from GitHub source, update is done using:
 ** `oc start-build nodeapp`
