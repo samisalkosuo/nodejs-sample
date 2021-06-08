@@ -11,14 +11,15 @@ import * as Utils from '../utils/utils.js';
 var router = express.Router();
 
 const logdna = require('@logdna/logger')
-
-const options = {
-  app: `${Data.state.appName}`
-, level: 'info' // set a default for when level is not provided in function calls
-}
 const ingestionKey = process.env.LOGDNA_INGESTION_KEY ? process.env.LOGDNA_INGESTION_KEY : "na";
-const LOGDNALOGGER = logdna.createLogger(ingestionKey, options)
-var logDNAEnabled = ingestionKey=="na" ? false: true;
+//get app name from env variable here, in order to set it in logDNA options
+var appName = process.env.APP_NAME || "nodejs-sample";
+const options = {
+    app: appName,
+    level: 'info' // set a default for when level is not provided in function calls
+  } ;
+const LOGDNALOGGER = logdna.createLogger(ingestionKey, options);
+var logDNAEnabled = ingestionKey == "na" ? false: true;
 const sendLogs_LogDNA_always = process.env.LOGDNA_SEND_ALWAYS ? true : false;
 
 var lastLogRetrievedTimestamp = "";
@@ -73,7 +74,7 @@ function sendLogEntriesToLogDNA()
         var entry = randomValue(logMessages);
         debug(`Sending "${entry}" to logDNA...`);
         LOGDNALOGGER.log(entry);
-        var timeoutValue =  Utils.getRndInteger(1200,6300);
+        var timeoutValue =  Utils.getRndInteger(1200,4300);
         setTimeout(sendLogEntriesToLogDNA, timeoutValue);
     }
     
@@ -87,7 +88,7 @@ function sendErrorEntriesToLogDNA()
         var entry = randomValue(errorMessages);
         debug(`Sending error "${entry}" to logDNA...`);
         LOGDNALOGGER.error(entry);
-        var timeoutValue =  Utils.getRndInteger(3000,30000);
+        var timeoutValue =  Utils.getRndInteger(2000,20000);
         setTimeout(sendErrorEntriesToLogDNA, timeoutValue);
     }
     
@@ -143,7 +144,6 @@ Current time UTC: ${now}<br/>
 };
 
 router.get('/', function (req, res) {
-    
     var html = getHTML();
     res.writeHead(200, { "Content-Type": "text/html" });
     res.write(html);
