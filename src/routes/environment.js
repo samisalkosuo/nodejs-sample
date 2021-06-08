@@ -7,10 +7,12 @@ var router = express.Router();
 // define the home page route
 router.get('/', function (req, res) {
     //list environment variables
-    var variables = "";
+    var variables = [];
     Object.entries(process.env).forEach(([key, value]) => {
-        variables = variables + `${key}=${value}\n`
-     });    
+          variables.push(`${key}=${value}`);
+     });
+     variables.sort();
+     variables = variables.join("\n");
      //const html = Utils.getPreHTML("Environment variables",`${variables}`);
      var html = Utils.getHTML(`Environment variables`,`
      <h2>Environment variables</h2>
