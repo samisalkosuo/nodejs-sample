@@ -30,6 +30,9 @@ var sendlogs_LogDNA = false || sendLogs_LogDNA_always;
 var sendErrors_LogDNA = false;
 var sendlogs_LogDNA_started = null;
 var sendErrors_LogDNA_started = null;
+var send10000logs_LogDNA_started = null;
+var send10000logs_LogDNA = false;
+var logEntryIndex = 0;
 
 if (logDNAEnabled == true && sendlogs_LogDNA == true)
 {
@@ -94,6 +97,28 @@ function sendErrorEntriesToLogDNA()
     
 }
 
+function send10000LogEntriesToLogDNA()
+{
+    if (send10000logs_LogDNA == true)
+    {
+        //send log entries to logDNA
+        var entry = randomValue(logMessages);
+        debug(`Sending index ${logEntryIndex} "${entry}" to logDNA...`);
+        LOGDNALOGGER.log(entry);
+        if (logEntryIndex < 10000)
+        {
+            setTimeout(send10000LogEntriesToLogDNA, 10);
+            logEntryIndex = logEntryIndex + 1
+        }
+        else
+        {
+            send10000logs_LogDNA = false;
+            send10000logs_LogDNA_started = null;
+        }
+    }
+    
+}
+
 
 function getHTML() {
     var now = new Date().toISOString();
@@ -114,12 +139,15 @@ function getHTML() {
         //set logDNA info
         var startedLogsTime = sendlogs_LogDNA_started == null ? "" : `(started ${sendlogs_LogDNA_started})`;
         var startedErrorsTime = sendErrors_LogDNA_started == null ? "" : `(started ${sendErrors_LogDNA_started})`;
+        var started10000LogsTime = send10000logs_LogDNA_started == null ? "": `(started ${send10000logs_LogDNA_started})`;
         logDNAHtml = `<p>
         LogDNA is enabled.
         <br/>
         Sending logs to LogDNA: ${sendlogs_LogDNA} ${startedLogsTime}
         <br/>
         Sending errors to LogDNA: ${sendErrors_LogDNA} ${startedErrorsTime}
+        <br/>
+        Sending 10,000 log entries to LogDNA: ${send10000logs_LogDNA} ${started10000LogsTime}
         </p>
         `;
     }
@@ -195,6 +223,19 @@ router.get('/logdna/stop', function (req, res) {
         //stop sending log entries to logdna
         sendlogs_LogDNA = false;
         sendlogs_LogDNA_started = null;
+    }
+    res.redirect(req.baseUrl);
+});
+
+router.get('/logdna/10000logs', function (req, res) {
+
+    debug(`send10000logs_LogDNA: ${send10000logs_LogDNA}`);
+    if (send10000logs_LogDNA == false)
+    {
+        send10000logs_LogDNA_started = new Date().toISOString();
+        send10000logs_LogDNA = true;
+        logEntryIndex = 0;
+        setTimeout(send10000LogEntriesToLogDNA, 1);
     }
     res.redirect(req.baseUrl);
 });
