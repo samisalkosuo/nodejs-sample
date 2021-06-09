@@ -74,7 +74,7 @@ function sendLogEntriesToLogDNA()
         var entry = randomValue(logMessages);
         debug(`Sending "${entry}" to logDNA...`);
         LOGDNALOGGER.log(entry);
-        var timeoutValue =  Utils.getRndInteger(1200,4300);
+        var timeoutValue =  Utils.getRndInteger(10,3000);
         setTimeout(sendLogEntriesToLogDNA, timeoutValue);
     }
     
@@ -88,7 +88,7 @@ function sendErrorEntriesToLogDNA()
         var entry = randomValue(errorMessages);
         debug(`Sending error "${entry}" to logDNA...`);
         LOGDNALOGGER.error(entry);
-        var timeoutValue =  Utils.getRndInteger(2000,20000);
+        var timeoutValue =  Utils.getRndInteger(1000,10000);
         setTimeout(sendErrorEntriesToLogDNA, timeoutValue);
     }
     
