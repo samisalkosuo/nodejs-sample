@@ -3,7 +3,7 @@ const require = createRequire(import.meta.url);
 const http = require('http');
 
 import {Data} from '../utils/data.js';
-import { debug } from './logger.js';
+import { debug, trace } from './logger.js';
 
 function getInstanaIntegration()
 {
@@ -105,7 +105,7 @@ function getEndpointLinks()
                 {
                     pathToShow = path.replaceAll(currentUrl,"");
                 }
-                debug(`pathToShow: ${pathToShow}`);
+                trace(`pathToShow: ${pathToShow}`);
 
                 linkHtml = `${linkHtml} <a href="${path}">${pathToShow}</a>`;
     
