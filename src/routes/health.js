@@ -1,5 +1,5 @@
 import express from 'express';
-import {debug} from '../utils/logger.js';
+import { debug } from '../utils/logger.js';
 
 
 var router = express.Router();
@@ -11,10 +11,10 @@ router.get('/', function (req, res) {
     //all other fail
 
     //TODO: do some status check and set status code
-    res.writeHead(200, {"Content-Type": "text/plain"});
+    res.writeHead(200, { "Content-Type": "text/plain" });
     res.write("OK");
     res.end();
 
 })
 
-export { router};
+export { router };

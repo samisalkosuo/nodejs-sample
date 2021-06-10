@@ -3,14 +3,13 @@
 
 
 import express from 'express';
-import {debug,log} from '../utils/logger.js';
-import {Data} from '../utils/data.js';
+import { debug, log } from '../utils/logger.js';
+import { Data } from '../utils/data.js';
 import * as Utils from '../utils/utils.js';
 
 var router = express.Router();
 
-function calculatePiDigits(digits)
-{
+function calculatePiDigits(digits) {
     let i = 1n;
     //let x = 3n * (10n ** 1020n);
     let x = 3n * (10n ** (digits + 20n));
@@ -24,23 +23,22 @@ function calculatePiDigits(digits)
     return piDigits;
 }
 
-router.get('/', function(req, res) {
+router.get('/', function (req, res) {
     debug(`Calculating pi...`);
-    Data.setState ({ calculatePiRequests: Data.state.calculatePiRequests + 1 }) 
-    var digits = BigInt(Utils.getRndInteger(31,20000));
+    Data.setState({ calculatePiRequests: Data.state.calculatePiRequests + 1 })
+    var digits = BigInt(Utils.getRndInteger(31, 20000));
     debug(`req.query.digits: ${req.query.digits}`);
-    if (req.query.digits)
-    {
+    if (req.query.digits) {
         digits = BigInt(req.query.digits);
     }
     debug(`Calculating ${digits} digits of pi...`);
     let startTime = Date.now();
     let piDigits = calculatePiDigits(digits);
     let endTime = Date.now();
-    let elapsedSecs = (endTime - startTime)/1000.0;
+    let elapsedSecs = (endTime - startTime) / 1000.0;
 
     debug(`Calculating ${digits} digits of pi...done.`);
-    var html = Utils.getHTML(`PI ${digits} digits`,`
+    var html = Utils.getHTML(`PI ${digits} digits`, `
     <h2>PI - ${digits} digits</h2>
     <p>
     Calculated in ${elapsedSecs} seconds.
@@ -49,10 +47,10 @@ router.get('/', function(req, res) {
     ${piDigits}
     </pre>
         `);
-    res.writeHead(200, {"Content-Type": "text/html"});
+    res.writeHead(200, { "Content-Type": "text/html" });
     res.write(html);
-    res.end(); 
+    res.end();
 
 });
 
-export { router};
+export { router };

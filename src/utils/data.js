@@ -16,15 +16,15 @@ class Data {
         }
         return this.instance;
     }
-    static get state() { 
-        return Data.inst._state; 
+    static get state() {
+        return Data.inst._state;
     }
-    static set state(state) { 
-        Data.inst._state = state; 
+    static set state(state) {
+        Data.inst._state = state;
     }
-    static setState(state) { 
-        Data.inst._state = {...Data.inst._state, ...state} 
+    static setState(state) {
+        Data.inst._state = { ...Data.inst._state, ...state }
     }
-  }
+}
 
-export {Data}
+export { Data }

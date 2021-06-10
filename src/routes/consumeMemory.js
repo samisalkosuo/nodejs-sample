@@ -3,8 +3,8 @@
 
 
 import express from 'express';
-import {debug,log,trace} from '../utils/logger.js';
-import {Data} from '../utils/data.js';
+import { debug, log, trace } from '../utils/logger.js';
+import { Data } from '../utils/data.js';
 import * as Utils from '../utils/utils.js';
 
 var router = express.Router();
@@ -12,8 +12,8 @@ var router = express.Router();
 //
 // Keep allocations referenced so they aren't garbage collected.
 //
-var allocations = []; 
-var allocations500MB = []; 
+var allocations = [];
+var allocations500MB = [];
 
 var allocatedMemory = null;
 var allocatedMemory500MB = null;
@@ -25,8 +25,7 @@ const field = 'heapUsed';
 
 let allocationStep = 333 * 1024;
 
-function getAllocatedMemoryGB()
-{
+function getAllocatedMemoryGB() {
     const mu = process.memoryUsage();
     trace(mu);
     const gb = mu[field] / 1024 / 1024 / 1024;
@@ -36,7 +35,7 @@ function getAllocatedMemoryGB()
 //
 // Allocate a certain size to test if it can be done.
 //
-function alloc (size) {
+function alloc(size) {
     const numbers = size / 8;
     const arr = []
     arr.length = numbers; // Simulate allocation of 'size' bytes.
@@ -49,7 +48,7 @@ function alloc (size) {
 //
 // Allocate successively larger sizes, doubling each time until we hit the limit.
 //
-function allocToMax () {
+function allocToMax() {
 
     debug("Start allocating...");
     const gbStart = getAllocatedMemoryGB();
@@ -58,8 +57,7 @@ function allocToMax () {
 
     var i = 0;
 
-    function consumeMemory()
-    {
+    function consumeMemory() {
         // Allocate memory.
         const allocation = alloc(allocationStep);
 
@@ -71,14 +69,12 @@ function allocToMax () {
 
         i = i + 1
 
-        if (i % 500 == 0)
-        {
+        if (i % 500 == 0) {
             allocatedMemory = `Allocated ${Math.round((mbNow - gbStart) * 100) / 100} GB`
             log(allocatedMemory);
         }
         //if (stopAllocatingMemory == false)
-        if (isAllocatingMemory == true)
-        {
+        if (isAllocatingMemory == true) {
             setTimeout(consumeMemory, 1);
         }
     };
@@ -88,7 +84,7 @@ function allocToMax () {
 
 };
 
-function allocTo500MB () {
+function allocTo500MB() {
 
     debug("Start allocating...");
     const gbStart = getAllocatedMemoryGB()//mu[field] / 1024 / 1024 / 1024;
@@ -97,8 +93,7 @@ function allocTo500MB () {
 
     var i = 0;
 
-    function consumeMemory()
-    {
+    function consumeMemory() {
         // Allocate memory.
         const allocation = alloc(allocationStep);
 
@@ -110,18 +105,15 @@ function allocTo500MB () {
 
         i = i + 1
 
-        if (i % 500 == 0)
-        {
+        if (i % 500 == 0) {
             allocatedMemory500MB = `Allocated ${Math.round((mbNow - gbStart) * 100) / 100} GB`
             log(allocatedMemory500MB);
         }
         trace(`mbNow - gbStart ${mbNow - gbStart}`);
-        if ((mbNow - gbStart) < 0.5)
-        {
+        if ((mbNow - gbStart) < 0.5) {
             setTimeout(consumeMemory, 1);
         }
-        else
-        {
+        else {
             isAllocatingMemory = false;
 
         }
@@ -132,12 +124,12 @@ function allocTo500MB () {
 
 };
 
-router.get('/', function(req, res) {
+router.get('/', function (req, res) {
     const gbStart = getAllocatedMemoryGB();
     var allocatedMemory = `Allocated ${Math.round(gbStart * 100) / 100} GB`
 
-    res.writeHead(200, {"Content-Type": "text/html"});
-    var html=Utils.getHTML("Allocated memory",`<h2>Allocated memory</h2>
+    res.writeHead(200, { "Content-Type": "text/html" });
+    var html = Utils.getHTML("Allocated memory", `<h2>Allocated memory</h2>
         <p>
         Allocating memory: ${isAllocatingMemory}
         </p>
@@ -153,11 +145,10 @@ router.get('/', function(req, res) {
 
 });
 
-router.get('/start', function(req, res) {
+router.get('/start', function (req, res) {
     log(`Start consuming memory...`);
 
-    if (isAllocatingMemory == false)
-    {
+    if (isAllocatingMemory == false) {
         isAllocatingMemory = true;
         setTimeout(allocToMax, 10);
 
@@ -165,7 +156,7 @@ router.get('/start', function(req, res) {
     res.redirect(req.baseUrl);
 });
 
-router.get('/stop', function(req, res) {
+router.get('/stop', function (req, res) {
     log(`Stop consuming memory...`);
     isAllocatingMemory = false;
     res.redirect(req.baseUrl);
@@ -173,23 +164,22 @@ router.get('/stop', function(req, res) {
 
 
 
-router.get('/500mb', function(req, res) {
+router.get('/500mb', function (req, res) {
     log(`Consuming memory to 500MB...`);
-    if (allocatedMemory500MB==null)
-    {
+    if (allocatedMemory500MB == null) {
         isAllocatingMemory = true;
         setTimeout(allocTo500MB, 10);
     }
     res.redirect(req.baseUrl);
 });
 
-router.get('/free', function(req, res) {
+router.get('/free', function (req, res) {
     debug(`Free allocated memory...`);
-    allocations = null; 
+    allocations = null;
     allocations500MB = null;
     allocatedMemory = null;
     allocatedMemory500MB = null;
-    allocations = []; 
+    allocations = [];
     allocations500MB = [];
     debug("Calling GC...");
     global.gc();

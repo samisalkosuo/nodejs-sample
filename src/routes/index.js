@@ -24,17 +24,17 @@ Build time: ${Data.state.buildTime}
 Current time UTC: ${now}<br/>
 </p>
 `;
-    return Utils.getHTML("home",html);
+    return Utils.getHTML("home", html);
 };
 
 router.get('/', function (req, res) {
     Data.setState({ rootRequests: Data.state.rootRequests + 1 });
-    
+
     var html = getHTML();
     res.writeHead(200, { "Content-Type": "text/html" });
     res.write(html);
     res.end();
-    
+
 });
 
 export { router };

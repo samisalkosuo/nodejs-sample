@@ -35,12 +35,12 @@ Current time UTC: ${new Date().toISOString()}<br/>
 </p>
 
 `;
-    return Utils.getHTML("system info",html);
+    return Utils.getHTML("system info", html);
 };
 
 
 router.get('/', function (req, res) {
-    
+
     // define all values, you want to get back
     var valueObject = {
         cpu: 'manufacturer, brand,cores',

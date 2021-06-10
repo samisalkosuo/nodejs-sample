@@ -1,4 +1,4 @@
-import {Data} from '../utils/data.js';
+import { Data } from '../utils/data.js';
 
 function getString(argArray) {
     //if argArray includes only string, return as it is
@@ -18,17 +18,16 @@ function getString(argArray) {
     return argArray
 }
 
-function addLogEntry(msg)
-{
+function addLogEntry(msg) {
     if (process.env.LOGAPI_ENABLED) {
         var logEntries = Data.state.logEntries
-        let entry= {
+        let entry = {
             "@timestamp": Date.now(),
             application: Data.state.appName,
             "@rawstring": msg
         };
         logEntries.push(entry);
-        Data.setState ({ logEntries: logEntries }) ;
+        Data.setState({ logEntries: logEntries });
     }
 }
 

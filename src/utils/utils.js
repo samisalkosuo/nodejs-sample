@@ -2,16 +2,14 @@ import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const http = require('http');
 
-import {Data} from '../utils/data.js';
+import { Data } from '../utils/data.js';
 import { debug, trace } from './logger.js';
 
-function getInstanaIntegration()
-{
+function getInstanaIntegration() {
     //http://instana.forum.fi.ibm.com:2999
     //sCxck5r4TIKb3mGXIkHE_g
     var instanaHtml = "";
-    if (process.env.INSTANA_URL && process.env.INSTANA_KEY)
-    {
+    if (process.env.INSTANA_URL && process.env.INSTANA_KEY) {
         instanaHtml = `<script>
 (function(s,t,a,n){s[t]||(s[t]=a,n=s[a]=function(){n.q.push(arguments)},
 n.q=[],n.v=2,n.l=1*new Date)})(window,"InstanaEumObject","ineum");
@@ -25,9 +23,8 @@ ineum('trackSessions');
     return instanaHtml;
 }
 
-function getCSSStyle()
-{
-    const css=`<style>
+function getCSSStyle() {
+    const css = `<style>
 body {
   background-color:#282828;
   color:#33ff33;
@@ -54,17 +51,14 @@ pre {
     return css;
 }
 
-function getEndpointLinks()
-{
+function getEndpointLinks() {
     var linkHtml = "";
-    if (Data.state.endpointlinks != null)
-    {
+    if (Data.state.endpointlinks != null) {
         linkHtml = "<table><tr>"
         var i = 1;
         Data.state.endpointlinks.forEach(element => {
             linkHtml = linkHtml + `<td>${element}</td>`;
-            if (i % 4 == 0)
-            {
+            if (i % 4 == 0) {
                 linkHtml = linkHtml + "</tr><tr>";
 
             }
@@ -78,50 +72,44 @@ function getEndpointLinks()
     var currentUrl = Data.state.requestpath
     linkHtml = `${linkHtml}
     <p>`;
-    if (currentUrl != null && currentUrl != "/" )
-    {
+    if (currentUrl != null && currentUrl != "/") {
         var paths = [];
         debug(`currentUrl: ${currentUrl}`);
-        if (currentUrl.lastIndexOf("/") > 0)
-        {
-            debug(`currentUrl.indexOf("/",1): ${currentUrl.indexOf("/",1)}`);
-            currentUrl = currentUrl.substring(0,currentUrl.indexOf("/",1));
+        if (currentUrl.lastIndexOf("/") > 0) {
+            debug(`currentUrl.indexOf("/",1): ${currentUrl.indexOf("/", 1)}`);
+            currentUrl = currentUrl.substring(0, currentUrl.indexOf("/", 1));
         }
         paths.push(currentUrl);
 
         Data.state.endpointsubpaths.forEach(path => {
-            if (path.indexOf(currentUrl) == 0)
-            {
+            if (path.indexOf(currentUrl) == 0) {
                 paths.push(path);
             }
         });
-        
-        if (paths.length > 1)
-        {
+
+        if (paths.length > 1) {
             paths.forEach(path => {
 
                 var pathToShow = path;
-                if (path.lastIndexOf("/") > 0)
-                {
-                    pathToShow = path.replaceAll(currentUrl,"");
+                if (path.lastIndexOf("/") > 0) {
+                    pathToShow = path.replaceAll(currentUrl, "");
                 }
                 trace(`pathToShow: ${pathToShow}`);
 
                 linkHtml = `${linkHtml} <a href="${path}">${pathToShow}</a>`;
-    
-            });    
+
+            });
         }
 
     }
     linkHtml = `${linkHtml}
     </p>`;
-    
+
     return linkHtml;
 }
 
-function getHtmlHeader(title)
-{
-    const htmlHeader=`<!DOCTYPE html>
+function getHtmlHeader(title) {
+    const htmlHeader = `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8"/>
@@ -135,42 +123,40 @@ ${getEndpointLinks()}
     return htmlHeader;
 }
 
-const htmlFooter=`
+const htmlFooter = `
 </body>
 </html>
 `;
 
-export function getPreHTML(title,content)
-{
+export function getPreHTML(title, content) {
     const html = `${getHtmlHeader(title)}
 <pre>
 ${content}
 </pre>
 ${htmlFooter}`;
-    
+
     return html;
 }
 
-export function getHTML(title,htmlContent)
-{
+export function getHTML(title, htmlContent) {
     const html = `${getHtmlHeader(title)}
 ${htmlContent}
 ${htmlFooter}`;
-    
+
     return html;
 }
 
 export function getRndInteger(min, max) {
-    return Math.floor(Math.random() * (max - min) ) + min;
-  }
+    return Math.floor(Math.random() * (max - min)) + min;
+}
 
 export function formatBytes2(bytes, decimals = 2, binaryUnits = true) {
-    if(bytes == 0) {
+    if (bytes == 0) {
         return '0 Bytes';
     }
-    var unitMultiple = (binaryUnits) ? 1024 : 1000; 
+    var unitMultiple = (binaryUnits) ? 1024 : 1000;
     var unitNames = (unitMultiple === 1024) ? // 1000 bytes in 1 Kilobyte (KB) or 1024 bytes for the binary version (KiB)
-        ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']: 
+        ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'] :
         ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
     var unitChanges = Math.floor(Math.log(bytes) / Math.log(unitMultiple));
     return parseFloat((bytes / Math.pow(unitMultiple, unitChanges)).toFixed(decimals || 0)) + ' ' + unitNames[unitChanges];
@@ -188,8 +174,8 @@ export function formatBytes(bytes, decimals = 2) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
 
-export function httpPostJSONData({body, ...options}) {
-    return new Promise((resolve,reject) => {
+export function httpPostJSONData({ body, ...options }) {
+    return new Promise((resolve, reject) => {
         const req = http.request({
             method: 'POST',
             ...options,
@@ -198,7 +184,7 @@ export function httpPostJSONData({body, ...options}) {
             res.on('data', data => chunks.push(data))
             res.on('end', () => {
                 let body = Buffer.concat(chunks);
-                switch(res.headers['content-type']) {
+                switch (res.headers['content-type']) {
                     case 'application/json':
                         body = JSON.parse(body);
                         break;
@@ -206,8 +192,8 @@ export function httpPostJSONData({body, ...options}) {
                 resolve(body)
             })
         })
-        req.on('error',reject);
-        if(body) {
+        req.on('error', reject);
+        if (body) {
             req.write(body);
         }
         req.end();
