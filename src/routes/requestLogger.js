@@ -19,9 +19,13 @@ router.use(function (req, res, next) {
         let endpointJson = all_routes(req.app);
         var endpoints = [];
         endpointJson.forEach(endpoint => {
+            debug("Endpoint:", endpoint);
             endpoint.methods.forEach(method => {
-                let pathStr = JSON.stringify(endpoint.path).replaceAll("\"", "");
-                endpoints.push(`<a href="${pathStr}">${pathStr}</a>`)
+                if (method === "GET")
+                {
+                    let pathStr = JSON.stringify(endpoint.path).replaceAll("\"", "");
+                    endpoints.push(`<a href="${pathStr}">${pathStr}</a>`);    
+                }
             });
         });
         endpoints.sort();

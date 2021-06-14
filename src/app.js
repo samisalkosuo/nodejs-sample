@@ -105,6 +105,9 @@ app.use('/logging', logging);
 import { router as loggingLogDNA } from './routes/loggingLogDNA.js';
 app.use('/logdna', loggingLogDNA);
 
+import { router as echo } from './routes/echo.js';
+app.use('/echo', echo);
+
 import { router as endpoints } from './routes/endpoints.js';
 app.use('/endpoints', endpoints);
 
