@@ -149,6 +149,7 @@ router.get('/logentries', function (req, res) {
     totalLogRetrievals = totalLogRetrievals + 1;
 
     res.json(logEntriesArray);
+    logEntriesArray = null;
     logEntriesArray = [];
 
 });
