@@ -72,6 +72,24 @@ function generateLogEntries()
         debug(`Message: "${entry}". Generating log JSON...`);
         var now = new Date();
 
+        /*
+        Watson AIOps custom logging mapping:
+        {
+  "rolling_time": 10,
+  "instance_id_field": "_app",
+  "log_entity_types": "_host,kubernetes.namespace_name,kubernetes.host,kubernetes.container_name",
+  "message_field": "_line",
+  "standard_entity_types": {
+    "pod_name": "pod",
+    "node_name": "node"
+  },
+  "timestamp_settings": {
+    "timestamp_field": "_ts",
+    "pattern": "yyyy-MM-dd hh:mm:ss z"
+  },
+  "codec": "custom"
+}
+        */
         var logJSON = {
             _host: `${hostName}`,
             _line: `${entry}`,
