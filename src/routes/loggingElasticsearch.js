@@ -28,7 +28,9 @@ var sendlogs_elasticSearch_started = null;
 var sendErrors_elasticSearch_started = null;
 var sendNumberOflogs_elasticSearch_started = null;
 var sendNumberOflogs_elasticSearch = false;
-
+var checkResponse = null;
+var checkTime = null;
+const checkUrlPath = "/_cat/indices";
 
 let logMessages = ["Customer detail found.",
     "Ticket was purchased.",
@@ -115,6 +117,32 @@ function sendBulkLogEntryToElasticsearch(logEntries)
     // post the data
     post_req.write(post_data);
     post_req.end();
+    
+}
+
+function checkElasticsearch()
+{
+    // Set up the request
+    var options = {
+        hostname: elasticSearchUrl,
+        port: 443,
+        path: checkUrlPath,
+        method: 'GET',
+        headers: {
+            'Authorization': `Basic ${base64Authentication}`
+        }    
+    };
+    checkTime = (new Date()).toISOString();
+    debug("calling Elasticsearch /_cat/indices...");
+    var req = https.request(options, function (res) {
+        res.setEncoding('utf8');
+        res.on('data', function (chunk) {
+            checkResponse = `${chunk}`
+            debug(`calling Elasticsearch /_cat/indices response: ${checkResponse}`);
+        });
+    });
+
+    req.end();
     
 }
 
@@ -244,6 +272,21 @@ function getHTML() {
         Log entry start: ${new Date(logHistoryStartTime).toISOString()}
         Log entry end: ${new Date(logHistoryEndTime).toISOString()}
         </pre>`;
+
+        var elasticSearchCheckHtml = "";
+        if (checkTime != null)
+        {
+            elasticSearchCheckHtml = `<p>
+            Elasticsearch check ${checkUrlPath} : ${checkTime}<br/>
+            Response:<br/>
+            <pre>
+${checkResponse == null ? "(no response yet, refresh page)" : checkResponse}
+            </pre>
+            </p>
+            `;
+            //Elasticsearch was checked
+        }
+
         elasticSearchHtml = `<p>
         Elasticsearch logging is enabled.
         <br/>
@@ -259,7 +302,7 @@ function getHTML() {
     var html = `
 <h2>Elasticsearch logging test</h2>
 ${elasticSearchHtml}
-
+${elasticSearchCheckHtml}
 <p>
 Current time UTC: ${now}<br/>
 </p>
@@ -357,5 +400,10 @@ router.get('/2daysoflogs/stop', function (req, res) {
     res.redirect(req.baseUrl);
 });
 
+router.get('/check', function (req, res) {
+
+    checkElasticsearch();
+    res.redirect(req.baseUrl);
+});
 
 export { router };
