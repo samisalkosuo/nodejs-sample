@@ -14,6 +14,7 @@ var appName = process.env.APP_NAME || "nodejs-sample";
 var elasticSearchUrl = process.env.ELASTICSEARCH_HOST
 var elasticSearchUser = process.env.ELASTICSEARCH_USER
 var elasticSearchPassword = process.env.ELASTICSEARCH_PASSWORD
+const sendLogs_Elasticsearch_always = process.env.ELASTICSEARCH_SEND_ALWAYS ? true : false;
 
 let buff = Buffer.from(`${elasticSearchUser}:${elasticSearchPassword}`);
 let base64Authentication = buff.toString('base64');
@@ -22,7 +23,7 @@ var elasticSearchEnabled = elasticSearchUrl == null ? false : true;
 
 var router = express.Router();
 
-var sendlogs_elasticSearch = false ;
+var sendlogs_elasticSearch = false || sendLogs_Elasticsearch_always;
 var sendErrors_elasticSearch = false;
 var sendlogs_elasticSearch_started = null;
 var sendErrors_elasticSearch_started = null;
@@ -31,6 +32,14 @@ var sendNumberOflogs_elasticSearch = false;
 var checkResponse = null;
 var checkTime = null;
 const checkUrlPath = "/_cat/indices";
+
+
+if (elasticSearchEnabled == true && sendlogs_elasticSearch == true) {
+    //start sending log entries to Elasticsearch
+    sendlogs_elasticSearch_started = new Date().toISOString();
+    setTimeout(sendLogEntriesToelasticSearch, 1);
+}
+
 
 let logMessages = ["Customer detail found.",
     "Ticket was purchased.",
