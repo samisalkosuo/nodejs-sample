@@ -14,6 +14,7 @@ var appName = process.env.APP_NAME || "nodejs-sample";
 var elasticSearchUrl = process.env.ELASTICSEARCH_HOST
 var elasticSearchUser = process.env.ELASTICSEARCH_USER
 var elasticSearchPassword = process.env.ELASTICSEARCH_PASSWORD
+var elastiSearchIndexName = process.env.ELASTICSEARCH_INDEX_NAME || `app-${appName}`
 const sendLogs_Elasticsearch_always = process.env.ELASTICSEARCH_SEND_ALWAYS ? true : false;
 
 let buff = Buffer.from(`${elasticSearchUser}:${elasticSearchPassword}`);
@@ -79,7 +80,8 @@ function sendLogEntryToElasticsearch(logEntry)
     var post_options = {
         hostname: elasticSearchUrl,
         port: 443,
-        path: `/logs-${appName}/_doc`,
+        //path: `/logs-${appName}/_doc`,
+        path: `/${elastiSearchIndexName}/_doc`,
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -106,7 +108,8 @@ function sendBulkLogEntryToElasticsearch(logEntries)
     var post_options = {
         hostname: elasticSearchUrl,
         port: 443,
-        path: `/logs-${appName}/_doc/_bulk`,
+        //path: `/logs-${appName}/_doc/_bulk`,
+        path: `/${elastiSearchIndexName}/_doc`,
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -149,6 +152,7 @@ function checkElasticsearch()
             checkResponse = `${chunk}`
             debug(`calling Elasticsearch /_cat/indices response: ${checkResponse}`);
         });
+        
     });
 
     req.end();
@@ -268,7 +272,7 @@ function getHTML() {
         <br/>ELASTICSEARCH_HOST=&lt;elasticsearch-host>
         <br/>ELASTICSEARCH_USERNAME=&lt;elasticsearch-username>
         <br/>ELASTICSEARCH_PASSWORD=&lt;elasticsearch-password>
-        
+        <br/>ELASTICSEARCH_INDEX_NAME=&lt;elasticsearch-index-name> (default: app-${appName})
         </b></p>`;
     }
     else {
@@ -410,8 +414,9 @@ router.get('/2daysoflogs/stop', function (req, res) {
 });
 
 router.get('/check', function (req, res) {
-
-    checkElasticsearch();
+    if (elasticSearchEnabled == true) {
+        checkElasticsearch();
+    }
     res.redirect(req.baseUrl);
 });
 
