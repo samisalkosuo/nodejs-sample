@@ -12,7 +12,7 @@ import * as Utils from '../utils/utils.js';
 var appName = process.env.APP_NAME || "nodejs-sample";
 
 var elasticSearchUrl = process.env.ELASTICSEARCH_HOST
-var elasticSearchUser = process.env.ELASTICSEARCH_USER
+var elasticSearchUser = process.env.ELASTICSEARCH_USERNAME
 var elasticSearchPassword = process.env.ELASTICSEARCH_PASSWORD
 var elastiSearchIndexName = process.env.ELASTICSEARCH_INDEX_NAME || `app-${appName}`
 const sendLogs_Elasticsearch_always = process.env.ELASTICSEARCH_SEND_ALWAYS ? true : false;
