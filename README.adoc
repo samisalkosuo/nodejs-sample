@@ -42,7 +42,8 @@ Here we create image directly from GitHub source.
 * Create new app and specify docker image:
 ** `oc new-app https://github.com/samisalkosuo/nodejs-sample -l app=nodeapp --name nodeapp -e APP_NAME=nodepp -e DEBUG=true`
 *** Option `--name nodeapp` sets the name for the resources.
-*** Environment variables are set also. For example, option `-e APP_NAME=mynodepp`.
+*** Set environment variables using option `-e APP_NAME=mynodepp`.
+*** Specify branch using `#`: `https://github.com/samisalkosuo/nodejs-sample#dev`
 *** Creating from existing image is done using: `oc new-app --docker-image=docker.io/kazhar/nodejs-sample:0.1 -l app=nodeapp --name nodeapp -e APP_NAME=nodepp -e DEBUG=true`
 *** Note: If using private registry, OpenShift must be able to pull images from the private registry, see https://docs.openshift.com/container-platform/4.3/openshift_images/managing_images/using-image-pull-secrets.html#images-update-global-pull-secret_using-image-pull-secrets[Using image pull secrets].
 * Creating new-app created also service:
@@ -55,6 +56,21 @@ Here we create image directly from GitHub source.
 * Delete application, if not needed anymore:
 ** `oc delete all -l app=nodeapp`
 ** Deletes all resources that have the specified label.
+
+===== Set environment variables
+
+Set environment variables after creating the deployment:
+
+- `oc set env deployment nodeapp ENV_VAR=VALUE`
+- To unset environment variable:
+  - `oc set env deployment nodeapp ENV_VAR-`
+  - add `-` after the variable name.
+
+===== Update deployment
+
+* Since deployment was created from GitHub source, update is done using:
+** `oc start-build nodeapp`
+* New image is created from source.
 
 ==== Set health check
 
@@ -77,11 +93,6 @@ The default OCP route is unsecured and does not accept TLS. This is the case at 
 * Or you can use existing ingress certificate by patching route to set termination to edge and redirect if using plain http:
 ** `oc patch route nodeapp -p '{"spec":{"tls":{"insecureEdgeTerminationPolicy":"Redirect","termination":"edge"}}}'`
 
-===== Update deployment
-
-* Since deployment was created from GitHub source, update is done using:
-** `oc start-build nodeapp`
-* New image is created from source.
 
 == Usage
 

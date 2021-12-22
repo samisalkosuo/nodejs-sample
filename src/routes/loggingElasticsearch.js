@@ -80,7 +80,6 @@ function sendLogEntryToElasticsearch(logEntry)
     var post_options = {
         hostname: elasticSearchUrl,
         port: 443,
-        //path: `/logs-${appName}/_doc`,
         path: `/${elastiSearchIndexName}/_doc`,
         method: 'POST',
         headers: {
@@ -108,8 +107,7 @@ function sendBulkLogEntryToElasticsearch(logEntries)
     var post_options = {
         hostname: elasticSearchUrl,
         port: 443,
-        //path: `/logs-${appName}/_doc/_bulk`,
-        path: `/${elastiSearchIndexName}/_doc`,
+        path: `/${elastiSearchIndexName}/_doc/_bulk`,
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
