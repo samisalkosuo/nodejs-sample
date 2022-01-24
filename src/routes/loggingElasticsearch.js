@@ -28,6 +28,7 @@ var sendlogs_elasticSearch = false || sendLogs_Elasticsearch_always;
 var sendErrors_elasticSearch = false;
 var sendlogs_elasticSearch_started = null;
 var sendErrors_elasticSearch_started = null;
+var oneShotErrorSent = null;
 var sendNumberOflogs_elasticSearch_started = null;
 var sendNumberOflogs_elasticSearch = false;
 var checkResponse = null;
@@ -210,6 +211,28 @@ function sendErrorEntriesToelasticSearch() {
 
 }
 
+function sendOneShotErrorEntryToelasticSearch() {
+    if (elasticSearchEnabled == true) {
+        //send log entries to elasticSearch
+        var timestamp = new Date().toISOString();
+        oneShotErrorSent = timestamp;
+        var entry = randomValue(errorMessages);
+        debug(`Sending only one error "${entry}" to elasticSearch...`);
+        var logEntry = {
+            "@timestamp": timestamp,          
+            "message": entry,
+            "log": {
+                "level": "ERROR"
+            },
+            "labels": {
+                "application_name": appName
+            }            
+          }
+        sendLogEntryToElasticsearch(logEntry);
+    }
+}
+
+
 function send2DaysOfLogs()
 {
     if (sendNumberOflogs_elasticSearch == true)
@@ -303,6 +326,8 @@ ${checkResponse == null ? "(no response yet, refresh page)" : checkResponse}
         <br/>
         Sending logs to elasticSearch: ${sendlogs_elasticSearch} ${startedLogsTime}
         <br/>
+        Oneshot error sent to elasticSearch: ${oneShotErrorSent}
+        <br/>
         Sending errors to elasticSearch: ${sendErrors_elasticSearch} ${startedErrorsTime}
         <br/>
         Sending 2 days of logs to elasticSearch: ${sendNumberOflogs_elasticSearch} ${startedNumberOfLogsTime}
@@ -369,6 +394,14 @@ router.get('/errors/stop', function (req, res) {
         //stop sending log entries to elasticSearch
         sendErrors_elasticSearch = false;
         sendErrors_elasticSearch_started = null;
+    }
+    res.redirect(req.baseUrl);
+});
+
+router.get('/errors/oneshot', function (req, res) {
+
+    if (elasticSearchEnabled == true && sendErrors_elasticSearch == false) {
+        sendOneShotErrorEntryToelasticSearch();
     }
     res.redirect(req.baseUrl);
 });
