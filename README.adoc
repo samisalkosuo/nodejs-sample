@@ -40,36 +40,36 @@ Here we create image directly from GitHub source.
 
 * Login to OCP and create a new project.
 * Create new app and specify docker image:
-** `oc new-app https://github.com/samisalkosuo/nodejs-sample -l app=nodeapp --name nodeapp -e APP_NAME=nodepp -e DEBUG=true`
-*** Option `--name nodeapp` sets the name for the resources.
-*** Set environment variables using option `-e APP_NAME=mynodepp`.
+** `oc new-app https://github.com/samisalkosuo/nodejs-sample -l app=nodejs-sample --name nodejs-sample -e APP_NAME=nodejs-sample -e DEBUG=true`
+*** Option `--name nodejs-sample` sets the name for the resources.
+*** Set environment variables using option `-e APP_NAME=nodejs-sample`.
 *** Specify branch using `#`: `https://github.com/samisalkosuo/nodejs-sample#dev`
-*** Creating from existing image is done using: `oc new-app --docker-image=docker.io/kazhar/nodejs-sample:0.1 -l app=nodeapp --name nodeapp -e APP_NAME=nodepp -e DEBUG=true`
+*** Creating from existing image is done using: `oc new-app --docker-image=docker.io/kazhar/nodejs-sample:0.1 -l app=nodejs-sample --name nodejs-sample -e APP_NAME=nodepp -e DEBUG=true`
 *** Note: If using private registry, OpenShift must be able to pull images from the private registry, see https://docs.openshift.com/container-platform/4.3/openshift_images/managing_images/using-image-pull-secrets.html#images-update-global-pull-secret_using-image-pull-secrets[Using image pull secrets].
 * Creating new-app created also service:
-** `oc describe svc nodeapp`
+** `oc describe svc nodejs-sample`
 * But route is not created automatically. So let's create it:
-** `oc expose svc nodeapp`
+** `oc expose svc nodejs-sample`
 * Check the route URL:
 ** `oc get route`
 * Go to that route URL.
 * Delete application, if not needed anymore:
-** `oc delete all -l app=nodeapp`
+** `oc delete all -l app=nodejs-sample`
 ** Deletes all resources that have the specified label.
 
 ===== Set environment variables
 
 Set environment variables after creating the deployment:
 
-- `oc set env deployment nodeapp ENV_VAR=VALUE`
+- `oc set env deployment nodejs-sample ENV_VAR=VALUE`
 - To unset environment variable:
-  - `oc set env deployment nodeapp ENV_VAR-`
+  - `oc set env deployment nodejs-sample ENV_VAR-`
   - add `-` after the variable name.
 
 ===== Update deployment
 
 * Since deployment was created from GitHub source, update is done using:
-** `oc start-build nodeapp`
+** `oc start-build nodejs-sample`
 * New image is created from source.
 
 ==== Set health check
@@ -83,7 +83,7 @@ It is good practice to add health check to all applications.
 When deploying application from source code, requests/limits are not set for pods. It is good practice to include them.
 
 * Set resource requests/limits:
-** `oc set resources deployment nodeapp --requests cpu=100m,memory=256Mi --limits cpu=500m,memory=1024Mi`
+** `oc set resources deployment nodejs-sample --requests cpu=100m,memory=256Mi --limits cpu=500m,memory=1024Mi`
 
 ===== Secure route
 
@@ -91,7 +91,7 @@ The default OCP route is unsecured and does not accept TLS. This is the case at 
 
 * https://docs.openshift.com/container-platform/4.3/networking/routes/secured-routes.html[OCP documentation] shows how to add custom certificate and use either edge or reencrypt.
 * Or you can use existing ingress certificate by patching route to set termination to edge and redirect if using plain http:
-** `oc patch route nodeapp -p '{"spec":{"tls":{"insecureEdgeTerminationPolicy":"Redirect","termination":"edge"}}}'`
+** `oc patch route nodejs-sample -p '{"spec":{"tls":{"insecureEdgeTerminationPolicy":"Redirect","termination":"edge"}}}'`
 
 
 == Usage
