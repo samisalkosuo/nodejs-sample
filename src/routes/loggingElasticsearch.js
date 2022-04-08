@@ -13,8 +13,8 @@ var appName = process.env.APP_NAME || "nodejs-sample";
 
 var elasticSearchHost = process.env.ELASTICSEARCH_HOST
 var elasticSearchPort = parseInt(process.env.ELASTICSEARCH_PORT, 10) || 9200
-var elasticSearchUser = process.env.ELASTICSEARCH_USERNAME
-var elasticSearchPassword = process.env.ELASTICSEARCH_PASSWORD
+var elasticSearchUser = process.env.ELASTICSEARCH_USER_NAME
+var elasticSearchPassword = process.env.ELASTICSEARCH_USER_PASSWORD
 var elastiSearchIndexName = process.env.ELASTICSEARCH_INDEX_NAME || `app-${appName}`
 const sendLogs_Elasticsearch_always = process.env.ELASTICSEARCH_SEND_ALWAYS ? true : false;
 
@@ -293,8 +293,8 @@ function getHTML() {
         elasticSearchHtml = `<p><b>Elasticsearch is not enabled. Enable it by setting environment variables:
         <br/>ELASTICSEARCH_HOST=&lt;elasticsearch-host>
         <br/>ELASTICSEARCH_PORT=&lt;elasticsearch-port>        
-        <br/>ELASTICSEARCH_USERNAME=&lt;elasticsearch-username>
-        <br/>ELASTICSEARCH_PASSWORD=&lt;elasticsearch-password>
+        <br/>ELASTICSEARCH_USER_NAME=&lt;elasticsearch-username>
+        <br/>ELASTICSEARCH_USER_PASSWORD=&lt;elasticsearch-password>
         <br/>ELASTICSEARCH_INDEX_NAME=&lt;elasticsearch-index-name> (default: app-${appName})
         </b></p>`;
     }
