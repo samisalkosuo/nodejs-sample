@@ -108,7 +108,7 @@ function sendBulkLogEntryToElasticsearch(logEntries)
     // Set up the request
     var post_options = {
         hostname: elasticSearchHost,
-        port: 443,
+        port: elasticSearchPort,
         path: `/${elastiSearchIndexName}/_doc/_bulk`,
         method: 'POST',
         headers: {
@@ -137,7 +137,7 @@ function checkElasticsearch()
     // Set up the request
     var options = {
         hostname: elasticSearchHost,
-        port: 443,
+        port: elasticSearchPort,
         path: checkUrlPath,
         method: 'GET',
         headers: {
