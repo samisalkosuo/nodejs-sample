@@ -116,7 +116,8 @@ function sendBulkLogEntryToElasticsearch(logEntries)
     var post_options = {
         hostname: elasticSearchHost,
         port: elasticSearchPort,
-        path: `/${elastiSearchIndexName}/_doc/_bulk`,
+//        path: `/${elastiSearchIndexName}/_doc/_bulk`,
+        path: `/${elastiSearchIndexName}/_bulk`,
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
