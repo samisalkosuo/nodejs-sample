@@ -16,6 +16,10 @@ var elasticSearchUser = process.env.ELASTICSEARCH_USER_NAME
 var elasticSearchPassword = process.env.ELASTICSEARCH_USER_PASSWORD
 var elastiSearchIndexName = process.env.ELASTICSEARCH_INDEX_NAME || `app-${appName}`
 var elasticSearchHTTP = process.env.ELASTICSEARCH_USE_HTTP || "false"
+
+//HOSTNAME in kubernetes is the pod name
+var currentHostName = process.env.HOSTNAME || appName
+
 const sendLogs_Elasticsearch_always = process.env.ELASTICSEARCH_SEND_ALWAYS ? true : false;
 
 var https = require('https');
@@ -186,8 +190,9 @@ function sendLogEntriesToelasticSearch() {
                 "level": "INFO"
             },
             "labels": {
-                "application_name": appName
-            }            
+                "application_name": appName,
+                "host_name": currentHostName
+            }
           }
         sendLogEntryToElasticsearch(logEntry);
         var timeoutValue = Utils.getRndInteger(800, 5000);
@@ -209,8 +214,9 @@ function sendErrorEntriesToelasticSearch() {
                 "level": "ERROR"
             },
             "labels": {
-                "application_name": appName
-            }            
+                "application_name": appName,
+                "host_name": currentHostName
+            }
           }
 
         sendLogEntryToElasticsearch(logEntry);
@@ -234,8 +240,9 @@ function sendOneShotErrorEntryToelasticSearch() {
                 "level": "ERROR"
             },
             "labels": {
-                "application_name": appName
-            }            
+                "application_name": appName,
+                "host_name": currentHostName
+            }
           }
         sendLogEntryToElasticsearch(logEntry);
     }
@@ -264,7 +271,8 @@ function send2DaysOfLogs()
                         "level": "INFO"
                     },
                     "labels": {
-                        "application_name": appName
+                        "application_name": appName,
+                        "host_name": currentHostName
                     }            
                 }
                 var entryStr = JSON.stringify(logEntry);
