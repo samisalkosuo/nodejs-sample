@@ -2,7 +2,6 @@
 //these two lines needed to use require in Node.js >14
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
-const https = require('https');
 
 import express from 'express';
 import { debug, error, trace } from '../utils/logger.js';
@@ -16,7 +15,15 @@ var elasticSearchPort = parseInt(process.env.ELASTICSEARCH_PORT, 10) || 9200
 var elasticSearchUser = process.env.ELASTICSEARCH_USER_NAME
 var elasticSearchPassword = process.env.ELASTICSEARCH_USER_PASSWORD
 var elastiSearchIndexName = process.env.ELASTICSEARCH_INDEX_NAME || `app-${appName}`
+var elasticSearchHTTP = process.env.ELASTICSEARCH_USE_HTTP || "false"
 const sendLogs_Elasticsearch_always = process.env.ELASTICSEARCH_SEND_ALWAYS ? true : false;
+
+var https = require('https');
+//use HTTP instead of HTTPS
+if (elasticSearchHTTP == "true")
+{
+    https = require('http');
+}
 
 let buff = Buffer.from(`${elasticSearchUser}:${elasticSearchPassword}`);
 let base64Authentication = buff.toString('base64');
