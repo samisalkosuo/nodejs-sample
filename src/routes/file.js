@@ -32,16 +32,26 @@ function getLine(chars = 128) {
     return dataArray.join('');
 
 }
+function startWritingFile(totalMB = 1)
+{
+    if (writingFile == false) {
+        writingFile = true;
+        setTimeout(function() {
+            writeFile(totalMB);
+        }, 100);
+    }
 
-function writeFile2() {
-    var i = 4096;
-    i = i * 100;
+}
 
-    let ok = true;
+function writeFile(totalMB = 1) {
+    var bytesToWritePerLine = 1024;
+    var totalLines = 1024;
+    var i = totalLines * totalMB; //1 MB
+    debug('enter function writeFile()');
     let writer = fs.createWriteStream(`${dataDir}/${(new Date()).toISOString()}.txt`);
     do {
         i--;
-        var data = getLine(256);
+        var data = getLine(bytesToWritePerLine);
         if (i === 0) {
             // Last time!
             writer.write(data, "utf8", () => {
@@ -51,32 +61,11 @@ function writeFile2() {
         } else {
             // See if we should continue, or wait.
             // Don't pass the callback, because we're not done yet.
-            ok = writer.write(data, "utf8");
+            writer.write(data, "utf8");
         }
-    } while (i > 0 && ok);
+    } while (i > 0);
 }
 
-function writeFile() {
-    var i = 4096;//1048576; //1 MB
-    i = i * 10;
-    write();
-    function write() {
-        var dataArray = [];
-        do {
-            i--;
-            var data = getLine(256);
-            dataArray.push(data);
-
-        } while (i > 0);
-
-        let writeStream = fs.createWriteStream(`${dataDir}/${(new Date()).toISOString()}.txt`);
-        writeStream.write(dataArray.join(''), "utf8", () => {
-            writingFile = false;
-            debug('wrote file');
-        });
-
-    }
-}
 
 async function getFSInfo(req, res, next) {
     try {
@@ -136,6 +125,7 @@ router.get('/dir', async function (req, res, next) {
     var files = fs.readdirSync(dataDir);
     files.forEach(file => {
         var stats = fs.statSync(dataDir + "/" + file);
+        debug(stats);
         html = html + getTableRow([file, Utils.formatBytes(stats.size)]);
 
     });
@@ -165,11 +155,18 @@ router.get('/fsinfo', async function (req, res, next) {
     next();
 });
 
+router.get('/write/1mb', async function (req, res, next) {
+    startWritingFile(1);
+    res.redirect(req.baseUrl);
+});
+
 router.get('/write/10mb', async function (req, res, next) {
-    if (writingFile == false) {
-        writingFile = true;
-        setTimeout(writeFile2, 100);
-    }
+    startWritingFile(10);
+    res.redirect(req.baseUrl);
+});
+
+router.get('/write/100mb', async function (req, res, next) {
+    startWritingFile(100);
     res.redirect(req.baseUrl);
 });
 

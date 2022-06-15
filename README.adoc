@@ -9,90 +9,144 @@ Node.js sample application. Developed to be used with OpenShift and other Kubern
 === Local
 
 * Build:
-** `docker build -t nodejssample .`
+```
+docker build -t nodejssample .
+```
 * Run in foreground:
-** `docker run -it --rm --name nodejssample -p 8080:8080 nodejssample`
+```
+docker run -it --rm --name nodejssample -p 8080:8080 nodejssample
+```
 * Run in background:
-** `docker run -d --name nodejssample -p 8080:8080 nodejssample`
+```
+docker run -d --name nodejssample -p 8080:8080 nodejssample
+```
 
-=== Docker Hub
+
+=== DockerHub
 
 This is available from Docker Hub: https://hub.docker.com/r/kazhar/nodejs-sample.
 
 * Pull:
-** `docker pull kazhar/nodejs-sample`
+```
+docker pull kazhar/nodejs-sample
+```
+
 * Run:
-** `docker run -it --rm -p 8080:8080 kazhar/nodejs-sample`
+```
+docker run -it --rm -p 8080:8080 kazhar/nodejs-sample
+```
 
-Environment variables include:
 
-* `DEBUG=true` - print debug stuff.
-* `APP_NAME=appname` - set application name.
-* `HEAP_SIZE=8182` - set node.js heap size, in MB.
+=== Environment variables
 
-=== OpenShift
+|===
+|Setting |Value |Default |Description
 
-==== Deploy application
+|DEBUG
+|<true or false>
+|false
+|Print debug entries to system out.
+
+|APP_NAME
+|<application name>
+|nodejs-sample
+|Set application name.
+
+|HEAP_SIZE
+|<heap size as integer>
+|2048
+|Set heap size for node.
+
+
+|===
+
+
+== OpenShift
+
+=== Deploy application
 
 Application can be deployed from container image or directly from (GitHub) source. The Container image may be given as tar-file (for example: _nodejssample.tar.gz_) or it is available from registry.
 
 Here we create image directly from GitHub source.
 
 * Login to OCP and create a new project.
-* Create new app and specify docker image:
-** `oc new-app https://github.com/samisalkosuo/nodejs-sample -l app=nodejs-sample --name nodejs-sample -e APP_NAME=nodejs-sample -e DEBUG=true`
-*** Option `--name nodejs-sample` sets the name for the resources.
-*** Set environment variables using option `-e APP_NAME=nodejs-sample`.
-*** Specify branch using `#`: `https://github.com/samisalkosuo/nodejs-sample#dev`
-*** Creating from existing image is done using: `oc new-app --docker-image=docker.io/kazhar/nodejs-sample:0.1 -l app=nodejs-sample --name nodejs-sample -e APP_NAME=nodepp -e DEBUG=true`
-*** Note: If using private registry, OpenShift must be able to pull images from the private registry, see https://docs.openshift.com/container-platform/4.3/openshift_images/managing_images/using-image-pull-secrets.html#images-update-global-pull-secret_using-image-pull-secrets[Using image pull secrets].
+* Create new app and specify source at GitHub:
+```
+oc new-app https://github.com/samisalkosuo/nodejs-sample -l app=nodejs-sample --name nodejs-sample -e APP_NAME=nodejs-sample -e DEBUG=true
+```
+* Parameters:
+** Option `--name nodejs-sample` sets the name for the resources.
+** Set environment variables using option `-e APP_NAME=nodejs-sample`.
+** Specify branch using `#`: `https://github.com/samisalkosuo/nodejs-sample#dev`
+** Creating from existing image is done using: `oc new-app --docker-image=docker.io/kazhar/nodejs-sample:0.10 -l app=nodejs-sample --name nodejs-sample -e APP_NAME=nodepp -e DEBUG=true`
+** Note: If using private registry, OpenShift must be able to pull images from the private registry, see https://docs.openshift.com/container-platform/4.3/openshift_images/managing_images/using-image-pull-secrets.html#images-update-global-pull-secret_using-image-pull-secrets[Using image pull secrets].
 * Creating new-app created also service:
-** `oc describe svc nodejs-sample`
+```
+oc describe svc nodejs-sample
+```
 * But route is not created automatically. So let's create it:
-** `oc expose svc nodejs-sample`
-* Check the route URL:
-** `oc get route`
-* Go to that route URL.
-* Delete application, if not needed anymore:
-** `oc delete all -l app=nodejs-sample`
-** Deletes all resources that have the specified label.
+```
+oc expose svc nodejs-sample
+```
 
-===== Set environment variables
+* Check the route URL:
+```
+oc get route
+```
+
+* Go to that route URL.
+* Delete application, if not needed anymore (deletes all resources that have the specified label):
+```
+oc delete all -l app=nodejs-sample
+```
+
+=== Set environment variables
 
 Set environment variables after creating the deployment:
 
-- `oc set env deployment nodejs-sample ENV_VAR=VALUE`
-- To unset environment variable:
-  - `oc set env deployment nodejs-sample ENV_VAR-`
-  - add `-` after the variable name.
+```
+oc set env deployment nodejs-sample ENV_VAR=VALUE
+```
 
-===== Update deployment
+To unset environment variable:
+
+```
+oc set env deployment nodejs-sample ENV_VAR-
+```
+Remember to add `-` after the variable name.
+
+=== Update deployment
 
 * Since deployment was created from GitHub source, update is done using:
-** `oc start-build nodejs-sample`
+```
+oc start-build nodejs-sample
+```
 * New image is created from source.
 
-==== Set health check
+=== Set health check
 
 Using OpenShift 4.6.19, health check can not be added from command line. See documentation to add health checks: https://docs.openshift.com/container-platform/4.6/applications/application-health.html.
 
 It is good practice to add health check to all applications.
 
-==== Set requests and limits
+=== Set requests and limits
 
 When deploying application from source code, requests/limits are not set for pods. It is good practice to include them.
 
 * Set resource requests/limits:
-** `oc set resources deployment nodejs-sample --requests cpu=100m,memory=256Mi --limits cpu=500m,memory=1024Mi`
+```
+oc set resources deployment nodejs-sample --requests cpu=100m,memory=256Mi --limits cpu=500m,memory=1024Mi
+```
 
-===== Secure route
+=== Secure route
 
 The default OCP route is unsecured and does not accept TLS. This is the case at the time of writing and OCP version 4.6.19.
 
 * https://docs.openshift.com/container-platform/4.3/networking/routes/secured-routes.html[OCP documentation] shows how to add custom certificate and use either edge or reencrypt.
 * Or you can use existing ingress certificate by patching route to set termination to edge and redirect if using plain http:
-** `oc patch route nodejs-sample -p '{"spec":{"tls":{"insecureEdgeTerminationPolicy":"Redirect","termination":"edge"}}}'`
-
+```
+oc patch route nodejs-sample -p '{"spec":{"tls":{"insecureEdgeTerminationPolicy":"Redirect","termination":"edge"}}}'
+```
 
 == Usage
 

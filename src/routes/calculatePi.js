@@ -39,7 +39,10 @@ router.get('/', function (req, res) {
 
     debug(`Calculating ${digits} digits of pi...done.`);
     var html = Utils.getHTML(`PI ${digits} digits`, `
-    <h2>PI - ${digits} digits</h2>
+    <h2>PI digits</h2>
+    <p>
+    Digits: ${digits} (set 'digits' parameter set number of digits, /calculatepi?digits=20000)
+    </p>
     <p>
     Calculated in ${elapsedSecs} seconds.
     </p>
