@@ -102,9 +102,6 @@ app.use('/file', file);
 import { router as logging } from './routes/logging.js';
 app.use('/logging', logging);
 
-import { router as loggingLogDNA } from './routes/loggingLogDNA.js';
-app.use('/logdna', loggingLogDNA);
-
 import { router as loggingElasticsearch } from './routes/loggingElasticsearch.js';
 app.use('/elasticsearch', loggingElasticsearch);
 
