@@ -1,25 +1,20 @@
-#FROM node:15.9.0-alpine3.13
-FROM node:16.15.1-alpine3.16
+FROM node:16.16.0-alpine3.16
 
 ENV HEAP_SIZE 2048
 
-#create data directory
-RUN mkdir -p /data 
-
 WORKDIR "/app"
 
-
 COPY src/package.json .
-#install dependencies
-RUN npm install
+#create data dir and install dependencies
+RUN mkdir -p /data && \
+    npm install && \
+    npm install --save @instana/collector
 
-RUN npm install --save @instana/collector
 #add app code
 COPY src/ .
 
-RUN chmod 755 /app/run_app.sh
-
-RUN date -R > buildtime.txt
+RUN chmod 755 /app/run_app.sh && \
+    date -R > buildtime.txt
 
 #app uses this port
 EXPOSE 8080

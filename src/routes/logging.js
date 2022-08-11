@@ -11,7 +11,11 @@ import * as Utils from '../utils/utils.js';
 
 var router = express.Router();
 
-const generateLogEntriesOnStart = process.env.LOGGING_GENERATE_ALWAYS ? true : false;
+var generateLogEntriesOnStart = false;
+if (process.env.LOGGING_GENERATE_ALWAYS === 'true')
+{
+    generateLogEntriesOnStart = true;
+}
 
 var lastLogRetrievedTimestamp = "";
 var totalLogRetrievals = 0;
@@ -109,9 +113,6 @@ Logging started: ${loggingStarted} ${timeStartedString}<br/>
 Log entries generated: ${logEntriesGenerated}<br/>
 Error logging started: ${errorLoggingStarted} ${errorTimeStartedString}<br/>
 Error Log entries generated: ${errorLogEntriesGenerated}<br/>
-<br/>
-Logs have been retrieved via /logentries ${totalLogRetrievals} times.<br/>
-Last log retrieval:  ${lastLogRetrievedTimestamp}
 </p>
 <p>
 Current time UTC: ${now}<br/>

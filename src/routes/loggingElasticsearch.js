@@ -20,7 +20,11 @@ var elasticSearchHTTP = process.env.ELASTICSEARCH_USE_HTTP || "false"
 //HOSTNAME in kubernetes is the pod name
 var currentHostName = process.env.HOSTNAME || appName
 
-const sendLogs_Elasticsearch_always = process.env.ELASTICSEARCH_SEND_ALWAYS ? true : false;
+var sendLogs_Elasticsearch_always = false;
+if (process.env.ELASTICSEARCH_SEND_ALWAYS === 'true')
+{
+    sendLogs_Elasticsearch_always = true;
+}
 
 var https = require('https');
 //use HTTP instead of HTTPS

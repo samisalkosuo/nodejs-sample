@@ -78,7 +78,7 @@ oc new-app https://github.com/samisalkosuo/nodejs-sample -l app=nodejs-sample --
 ** Option `--name nodejs-sample` sets the name for the resources.
 ** Set environment variables using option `-e APP_NAME=nodejs-sample`.
 ** Specify branch using `#`: `https://github.com/samisalkosuo/nodejs-sample#dev`
-** Creating from existing image is done using: `oc new-app --docker-image=docker.io/kazhar/nodejs-sample:0.10 -l app=nodejs-sample --name nodejs-sample -e APP_NAME=nodepp -e DEBUG=true`
+** Creating from existing image is done using: `oc new-app --image=docker.io/kazhar/nodejs-sample:0.11 -l app=nodejs-sample --name nodejs-sample -e APP_NAME=nodepp`
 ** Note: If using private registry, OpenShift must be able to pull images from the private registry, see https://docs.openshift.com/container-platform/4.3/openshift_images/managing_images/using-image-pull-secrets.html#images-update-global-pull-secret_using-image-pull-secrets[Using image pull secrets].
 * Creating new-app created also service:
 ```
