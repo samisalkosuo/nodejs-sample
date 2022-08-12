@@ -17,6 +17,13 @@ if (process.env.LOGGING_GENERATE_ALWAYS === 'true')
     generateLogEntriesOnStart = true;
 }
 
+var addTimeToLogEntry = true;
+if (process.env.LOGGING_ADD_TIME_TO_LOG_ENTRY === 'false')
+{
+    addTimeToLogEntry = false;
+}
+
+
 var lastLogRetrievedTimestamp = "";
 var totalLogRetrievals = 0;
 var logEntriesGenerated = 0;
@@ -69,10 +76,17 @@ function generateLogEntries()
     if (loggingStarted == true) {
         //print log entries
         var entry = randomValue(logMessages);
-        var now = new Date().toISOString()
 
         logEntriesGenerated = logEntriesGenerated + 1;
-        console.log(`${now}: ${entry}`);
+        if (addTimeToLogEntry == true)
+        {
+            var now = new Date().toISOString()
+            console.log(`${now}: ${entry}`);
+        }
+        else
+        {
+            console.log(`${entry}`);
+        }
         var timeoutValue = Utils.getRndInteger(900, 3500);
         setTimeout(generateLogEntries, timeoutValue);
     }
@@ -84,10 +98,18 @@ function generateErrorLogEntries()
     if (errorLoggingStarted == true) {
         //send log entries to logDNA
         var entry = randomValue(errorMessages);
-        var now = new Date().toISOString()
 
         errorLogEntriesGenerated = errorLogEntriesGenerated + 1;
-        console.log(`${now}: ERROR ${entry}`);
+        if (addTimeToLogEntry == true)
+        {
+            var now = new Date().toISOString()
+            console.log(`${now}: ERROR ${entry}`);
+        }
+        else
+        {
+            console.log(`ERROR ${entry}`);
+
+        }
 
         var timeoutValue = Utils.getRndInteger(1500, 8500);
         setTimeout(generateErrorLogEntries, timeoutValue);

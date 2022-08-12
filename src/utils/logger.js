@@ -19,7 +19,7 @@ function getString(argArray) {
 }
 
 function addLogEntry(msg) {
-    if (process.env.LOGAPI_ENABLED) {
+    if (process.env.LOGAPI_ENABLED === 'true') {
         var logEntries = Data.state.logEntries
         let entry = {
             "@timestamp": Date.now(),
@@ -32,7 +32,7 @@ function addLogEntry(msg) {
 }
 
 export function debug(...args) {
-    if (process.env.DEBUG) {
+    if (process.env.DEBUG === 'true') {
         let now = (new Date()).toISOString();
         console.log(`${now} DEBUG `, getString(args));
     }
@@ -45,7 +45,7 @@ export function logapi_log(...args) {
 };
 
 export function trace(...args) {
-    if (process.env.TRACE) {
+    if (process.env.TRACE === 'true') {
         let now = (new Date()).toISOString();
         console.log(`${now} TRACE `, getString(args));
     }
