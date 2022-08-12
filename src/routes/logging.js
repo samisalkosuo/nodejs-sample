@@ -3,11 +3,13 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const https = require('https');
+const fs = require('fs');
 
 import express from 'express';
 import { debug, error, trace } from '../utils/logger.js';
 import { Data } from '../utils/data.js';
 import * as Utils from '../utils/utils.js';
+import { time } from 'systeminformation';
 
 var router = express.Router();
 
@@ -21,6 +23,12 @@ var addTimeToLogEntry = true;
 if (process.env.LOGGING_ADD_TIME_TO_LOG_ENTRY === 'false')
 {
     addTimeToLogEntry = false;
+}
+
+var jsonLogEntry = false;
+if (process.env.LOGGING_LOG_ENTRY_IS_JSON === 'true')
+{
+    jsonLogEntry = true;
 }
 
 
@@ -69,24 +77,93 @@ const randomValue = (list) => {
     return list[Math.floor(Math.random() * list.length)];
 };
 
+
+var logHistoryStartTime = null;
+var logHistoryEndTime = null
+var logEntryTimestamp = null;
+var twodaysoflogsPrinted = false;
+var twodaysoflogsInProgress = false;
+
+//directory to hold files
+var dataDir = fs.existsSync("/data") == true ? "/data" : fs.realpathSync(".");
+
+
+function getLogEntry(isError = false, timestamp)
+{
+    var entry = "";
+
+    if (isError == false)
+    {
+        entry = randomValue(logMessages);
+    }
+    else
+    {
+        entry = randomValue(errorMessages);
+        entry = `ERROR ${entry}`;   
+    }
+
+    if (timestamp)
+    {
+        timestamp = new Date(timestamp);
+    }
+    else
+    {
+        timestamp = new Date();
+    }
+    
+    if (jsonLogEntry == true)
+    {
+        var jsonEntry = {
+            "time": timestamp.getTime(),
+            "message": entry
+        };
+        entry = JSON.stringify(jsonEntry);
+    
+    }
+    else
+    {
+        if (addTimeToLogEntry == true)
+        {
+            var ts = timestamp.toISOString();
+            entry = `${ts}: ${entry}`;
+        }    
+    }
+
+    return entry;
+}
+
+function print2DaysOfLogs()
+{
+    twodaysoflogsInProgress = true;
+    var logEntriesArray = [];
+    while (logEntryTimestamp < logHistoryEndTime)
+    {
+        var timeoutValue = Utils.getRndInteger(800, 5000);
+        logEntryTimestamp = logEntryTimestamp + timeoutValue;
+
+        var entry = getLogEntry(false,logEntryTimestamp);            
+
+        logEntriesArray.push(entry);
+    }
+
+    var logEntriesString = logEntriesArray.join("\n") + "\n";
+    fs.writeFileSync(`${dataDir}/2daysoflogs.txt`, logEntriesString);
+    
+    console.log(logEntriesString);
+
+    twodaysoflogsPrinted = true;
+    twodaysoflogsInProgress = false;
+}
+
 function generateLogEntries()
 {
     //generate log entries every 1 ..3 seconds
     //if logging enabled, call this function again
     if (loggingStarted == true) {
         //print log entries
-        var entry = randomValue(logMessages);
-
+        var entry = getLogEntry();  
         logEntriesGenerated = logEntriesGenerated + 1;
-        if (addTimeToLogEntry == true)
-        {
-            var now = new Date().toISOString()
-            console.log(`${now}: ${entry}`);
-        }
-        else
-        {
-            console.log(`${entry}`);
-        }
+        console.log(`${entry}`);
         var timeoutValue = Utils.getRndInteger(900, 3500);
         setTimeout(generateLogEntries, timeoutValue);
     }
@@ -96,21 +173,11 @@ function generateLogEntries()
 function generateErrorLogEntries()
 {
     if (errorLoggingStarted == true) {
-        //send log entries to logDNA
-        var entry = randomValue(errorMessages);
+        var entry = getLogEntry({isError: true}
 
+        );
         errorLogEntriesGenerated = errorLogEntriesGenerated + 1;
-        if (addTimeToLogEntry == true)
-        {
-            var now = new Date().toISOString()
-            console.log(`${now}: ERROR ${entry}`);
-        }
-        else
-        {
-            console.log(`ERROR ${entry}`);
-
-        }
-
+        console.log(entry);
         var timeoutValue = Utils.getRndInteger(1500, 8500);
         setTimeout(generateErrorLogEntries, timeoutValue);
     }
@@ -122,6 +189,11 @@ function getHTML() {
 
     var timeStartedString = loggingStartedTimestamp == null ? "" : `(${loggingStartedTimestamp})`
     var errorTimeStartedString = errorLoggingStartedTimestamp == null ? "" : `(${errorLoggingStartedTimestamp})`
+    var twodaysinprogress = "";
+    if (twodaysoflogsInProgress == true)
+    {
+        twodaysinprogress = "(PRINTING IN PROGRESS)";
+    }
     var html = `
 <h2>Logging test</h2>
 <p>
@@ -135,6 +207,7 @@ Logging started: ${loggingStarted} ${timeStartedString}<br/>
 Log entries generated: ${logEntriesGenerated}<br/>
 Error logging started: ${errorLoggingStarted} ${errorTimeStartedString}<br/>
 Error Log entries generated: ${errorLogEntriesGenerated}<br/>
+2 days of logs printed: ${twodaysoflogsPrinted} ${twodaysinprogress}<br/>
 </p>
 <p>
 Current time UTC: ${now}<br/>
@@ -193,5 +266,32 @@ router.get('/error/stop', function (req, res) {
     }
     res.redirect(req.baseUrl);
 });
+
+router.get('/print2daysoflogs', function (req, res) {
+
+    if (loggingStarted == false) {
+       
+        //print two days of logs to to system out
+        var d = new Date();
+        d.setUTCHours(0, 0, 1, 0);
+        //              msec   sec  min  hours  days
+        var _oneday_ms = 1000 * 60 * 60 * 24;
+        //minus 2 days
+        logHistoryStartTime = d.getTime() - _oneday_ms * 2;
+        logHistoryEndTime = d.getTime() - 2000;
+        //for testing
+        //logHistoryEndTime = logHistoryStartTime + 1000 * 20; 
+        debug(`Log history start    : ${logHistoryStartTime}`);
+        debug(`Log history start ISO: ${new Date(logHistoryStartTime).toISOString()}`);        
+        debug(`Log history end      : ${logHistoryEndTime}`);
+        debug(`Log history end ISO  : ${new Date(logHistoryEndTime).toISOString()}`);        
+        logEntryTimestamp = logHistoryStartTime
+        debug(`logEntryTimestamp ISO  : ${new Date(logEntryTimestamp).toISOString()}`);        
+
+        setTimeout(print2DaysOfLogs, 1);
+    }
+    res.redirect(req.baseUrl);
+});
+
 
 export { router };
