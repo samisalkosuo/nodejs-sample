@@ -184,11 +184,6 @@ function checkElasticsearch()
     
 }
 
-function getLogEntry()
-{
-    return randomValue(logMessages);
-}
-
 function getLogEntryJSON(logTimestamp,isError)
 {
     var timestamp = new Date().toISOString();
@@ -196,11 +191,13 @@ function getLogEntryJSON(logTimestamp,isError)
     {
         timestamp = new Date(logTimestamp).toISOString();
     }
-    var entry = getLogEntry();
+    var entry = randomValue(logMessages);
     var errorLevel = "INFO";
     if (isError == true)
     {
         errorLevel = "ERROR";
+        entry = randomValue(errorMessages);
+
     }
     var appName = APP_NAME;
     var hostName = currentHostName;
