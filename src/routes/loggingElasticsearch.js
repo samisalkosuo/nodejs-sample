@@ -8,17 +8,20 @@ import { debug, error, trace } from '../utils/logger.js';
 import { Data } from '../utils/data.js';
 import * as Utils from '../utils/utils.js';
 
-var appName = process.env.APP_NAME || "nodejs-sample";
+var APP_NAME = process.env.APP_NAME || "nodejs-sample";
 
-var elasticSearchHost = process.env.ELASTICSEARCH_HOST
-var elasticSearchPort = parseInt(process.env.ELASTICSEARCH_PORT, 10) || 9200
-var elasticSearchUser = process.env.ELASTICSEARCH_USER_NAME
-var elasticSearchPassword = process.env.ELASTICSEARCH_USER_PASSWORD
-var elastiSearchIndexName = process.env.ELASTICSEARCH_INDEX_NAME || `app-${appName}`
-var elasticSearchHTTP = process.env.ELASTICSEARCH_USE_HTTP || "false"
+var elasticSearchHost = process.env.ELASTICSEARCH_HOST;
+var elasticSearchPort = parseInt(process.env.ELASTICSEARCH_PORT, 10) || 9200;
+var elasticSearchUser = process.env.ELASTICSEARCH_USER_NAME;
+var elasticSearchPassword = process.env.ELASTICSEARCH_USER_PASSWORD;
+var elastiSearchIndexName = process.env.ELASTICSEARCH_INDEX_NAME || `app-${APP_NAME}`;
+var elasticSearchHTTP = process.env.ELASTICSEARCH_USE_HTTP || "false";
 
 //HOSTNAME in kubernetes is the pod name
-var currentHostName = process.env.HOSTNAME || appName
+var currentHostName = process.env.HOSTNAME || APP_NAME;
+
+//use app name as host name in Elasticsearch JSON
+var APP_NAME_EQUALS_HOST_NAME=true;
 
 var sendLogs_Elasticsearch_always = false;
 if (process.env.ELASTICSEARCH_SEND_ALWAYS === 'true')
@@ -59,10 +62,11 @@ if (elasticSearchEnabled == true && sendlogs_elasticSearch == true) {
 }
 
 
-let logMessages = ["Customer detail found.",
+let logMessages = ["Customer details found.",
     "Ticket was purchased.",
-    "Ticket was canceled.",
+    "Purchase was canceled.",
     "Seat was selected.",
+    "Seat unavailable.",
     "Multiple tickets purchased.",
     "Credit card validation was successful.",
     "Credit card validation failed.",
@@ -70,9 +74,13 @@ let logMessages = ["Customer detail found.",
     "Airplane was selected.",
     "Bus was selected.",
     "Car was selected.",
+    "Bicycle was selected.",
+    "Ship was selected.",
     "Transportation method not selected.",
+    "Transportation method unavailable.",
     "Destination was selected.",
     "Destination does not exist.",
+    "Destination is valid.",
     "Destination out of range."
 ];
 
@@ -80,6 +88,7 @@ let errorMessages = [
     "OutOfMemoryError",
     "IOException",
     "NullPointerException",
+    "ArrayIndexOutOfBoundsException",
     "UnexpectedUserBehaviourException"
 ];
 
@@ -137,8 +146,8 @@ function sendBulkLogEntryToElasticsearch(logEntries)
         res.setEncoding('utf8');
         res.on('data', function (chunk) {
             trace(`Log entries sent. Response: ${chunk}`);
-            debug(`Log entries sent. Calling send2DaysOfLogs again...`);
-            setTimeout(send2DaysOfLogs, 2000);
+            debug(`Log entries sent. Calling sendLogHistory again...`);
+            setTimeout(sendLogHistory, 2000);
         });
     });
 
@@ -177,16 +186,51 @@ function checkElasticsearch()
 
 function getLogEntry()
 {
-    return randomValue(logMessages);;
+    return randomValue(logMessages);
+}
+
+function getLogEntryJSON(logTimestamp,isError)
+{
+    var timestamp = new Date().toISOString();
+    if (logTimestamp != null)
+    {
+        timestamp = new Date(logTimestamp).toISOString();
+    }
+    var entry = getLogEntry();
+    var errorLevel = "INFO";
+    if (isError == true)
+    {
+        errorLevel = "ERROR";
+    }
+    var appName = APP_NAME;
+    var hostName = currentHostName;
+    if (APP_NAME_EQUALS_HOST_NAME == true)
+    {
+        appName = hostName;
+    }
+
+    var logEntry = {
+        "@timestamp": timestamp,          
+        "message": entry,
+        "log": {
+            "level": errorLevel
+        },
+        "labels": {
+         //   "application_name": appName,
+            "host_name": hostName
+        }
+      }
+
+    return logEntry;
 }
 
 function sendLogEntriesToelasticSearch() {
     if (sendlogs_elasticSearch == true) {
         //send log entries to elasticSearch
-        var entry = getLogEntry();
-        debug(`Sending "${entry}" to elasticSearch...`);
-        
-        var timestamp = new Date().toISOString();
+        //var entry = getLogEntry();
+        //debug(`Sending "${entry}" to elasticSearch...`);
+        var logEntry = getLogEntryJSON(null,false);
+        /*var timestamp = new Date().toISOString();
         var logEntry = {
             "@timestamp": timestamp,          
             "message": entry,
@@ -198,6 +242,7 @@ function sendLogEntriesToelasticSearch() {
                 "host_name": currentHostName
             }
           }
+          */
         sendLogEntryToElasticsearch(logEntry);
         var timeoutValue = Utils.getRndInteger(800, 5000);
         setTimeout(sendLogEntriesToelasticSearch, timeoutValue);
@@ -208,9 +253,12 @@ function sendLogEntriesToelasticSearch() {
 function sendErrorEntriesToelasticSearch() {
     if (sendErrors_elasticSearch == true) {
         //send log entries to elasticSearch
-        var timestamp = new Date().toISOString();
-        var entry = randomValue(errorMessages);
-        debug(`Sending error "${entry}" to elasticSearch...`);
+        //var timestamp = new Date().toISOString();
+        //var entry = randomValue(errorMessages);
+        //debug(`Sending error "${entry}" to elasticSearch...`);
+
+        var logEntry = getLogEntryJSON(null,true);
+/*
         var logEntry = {
             "@timestamp": timestamp,          
             "message": entry,
@@ -222,7 +270,7 @@ function sendErrorEntriesToelasticSearch() {
                 "host_name": currentHostName
             }
           }
-
+*/
         sendLogEntryToElasticsearch(logEntry);
         var timeoutValue = Utils.getRndInteger(1000, 10000);
         setTimeout(sendErrorEntriesToelasticSearch, timeoutValue);
@@ -235,8 +283,10 @@ function sendOneShotErrorEntryToelasticSearch() {
         //send log entries to elasticSearch
         var timestamp = new Date().toISOString();
         oneShotErrorSent = timestamp;
-        var entry = randomValue(errorMessages);
-        debug(`Sending only one error "${entry}" to elasticSearch...`);
+  //      var entry = randomValue(errorMessages);
+    //    debug(`Sending only one error "${entry}" to elasticSearch...`);
+        var logEntry = getLogEntryJSON(null,true);
+/*
         var logEntry = {
             "@timestamp": timestamp,          
             "message": entry,
@@ -248,12 +298,13 @@ function sendOneShotErrorEntryToelasticSearch() {
                 "host_name": currentHostName
             }
           }
+          */
         sendLogEntryToElasticsearch(logEntry);
     }
 }
 
 
-function send2DaysOfLogs()
+function sendLogHistory()
 {
     if (sendNumberOflogs_elasticSearch == true)
     {
@@ -267,7 +318,8 @@ function send2DaysOfLogs()
                 logEntriesArray.push(createLineString);
                 var timeoutValue = Utils.getRndInteger(800, 5000);
                 logEntryTimestamp = logEntryTimestamp + timeoutValue;
-                var entry = getLogEntry();
+                var logEntry = getLogEntryJSON(logEntryTimestamp,false);
+                /*var entry = getLogEntry();
                 var logEntry = {
                     "@timestamp": new Date(logEntryTimestamp).toISOString(),
                     "message": entry,
@@ -279,6 +331,7 @@ function send2DaysOfLogs()
                         "host_name": currentHostName
                     }            
                 }
+                */
                 var entryStr = JSON.stringify(logEntry);
                 logEntriesArray.push(entryStr);
                 trace(`log entry to send: ${entryStr}`);
@@ -291,7 +344,7 @@ function send2DaysOfLogs()
             debug(`sending ${logEntriesArray.length} to Elasticsearch...`);
             sendBulkLogEntryToElasticsearch(logEntriesString);
             //call this function in sendBulkLogEntryToElasticsearch-function
-            //setTimeout(send2DaysOfLogs, 2000);
+            //setTimeout(sendLogHistory, 2000);
 
         }
         else
@@ -315,7 +368,7 @@ function getHTML() {
         <br/>ELASTICSEARCH_PORT=&lt;elasticsearch-port>        
         <br/>ELASTICSEARCH_USER_NAME=&lt;elasticsearch-username>
         <br/>ELASTICSEARCH_USER_PASSWORD=&lt;elasticsearch-password>
-        <br/>ELASTICSEARCH_INDEX_NAME=&lt;elasticsearch-index-name> (default: app-${appName})
+        <br/>ELASTICSEARCH_INDEX_NAME=&lt;elasticsearch-index-name> (default: app-${APP_NAME})
         </b></p>`;
     }
     else {
@@ -348,11 +401,11 @@ ${checkResponse == null ? "(no response yet, refresh page)" : checkResponse}
         <br/>
         Sending logs to elasticSearch: ${sendlogs_elasticSearch} ${startedLogsTime}
         <br/>
-        Oneshot error sent to elasticSearch: ${oneShotErrorSent}
+        Oneshot error sent to elasticSearch: ~${oneShotErrorSent}
         <br/>
         Sending errors to elasticSearch: ${sendErrors_elasticSearch} ${startedErrorsTime}
         <br/>
-        Sending 2 days of logs to elasticSearch: ${sendNumberOflogs_elasticSearch} ${startedNumberOfLogsTime}
+        Log history sent to elasticSearch: ${startedNumberOfLogsTime}
         </p>
         `;
     }
@@ -428,7 +481,7 @@ router.get('/errors/oneshot', function (req, res) {
     res.redirect(req.baseUrl);
 });
 
-router.get('/2daysoflogs/start', function (req, res) {
+router.get('/history/send', function (req, res) {
 
     debug(`sendNumberOflogs_elasticSearch: ${sendNumberOflogs_elasticSearch}`);
     if (sendNumberOflogs_elasticSearch == false) {
@@ -440,11 +493,12 @@ router.get('/2daysoflogs/start', function (req, res) {
         d.setUTCHours(0, 0, 1, 0);
         //              msec   sec  min  hours  days
         var _oneday_ms = 1000 * 60 * 60 * 24;
-        //minus 2 days
-        logHistoryStartTime = d.getTime() - _oneday_ms * 2;
+        //minus  days
+        var days = 5;//2
+        logHistoryStartTime = d.getTime() - _oneday_ms * days;
         logHistoryEndTime = d.getTime() - 2000;
-        //for testing
-        //logHistoryEndTime = logHistoryStartTime + 1000 * 20; 
+        logHistoryEndTime = (new Date()).getTime() - 3600000;
+
         debug(`Log history start    : ${logHistoryStartTime}`);
         debug(`Log history start ISO: ${new Date(logHistoryStartTime).toISOString()}`);        
         debug(`Log history end      : ${logHistoryEndTime}`);
@@ -452,11 +506,11 @@ router.get('/2daysoflogs/start', function (req, res) {
         logEntryTimestamp = logHistoryStartTime
         debug(`logEntryTimestamp ISO  : ${new Date(logEntryTimestamp).toISOString()}`);        
 
-        setTimeout(send2DaysOfLogs, 1);
+        setTimeout(sendLogHistory, 1);
     }
     res.redirect(req.baseUrl);
 });
-
+/*
 router.get('/2daysoflogs/stop', function (req, res) {
 
     if (sendNumberOflogs_elasticSearch == true) {
@@ -465,7 +519,7 @@ router.get('/2daysoflogs/stop', function (req, res) {
     }
     res.redirect(req.baseUrl);
 });
-
+*/
 router.get('/check', function (req, res) {
     if (elasticSearchEnabled == true) {
         checkElasticsearch();
