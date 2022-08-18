@@ -21,8 +21,11 @@ var elasticSearchHTTP = process.env.ELASTICSEARCH_USE_HTTP || "false";
 var currentHostName = process.env.HOSTNAME || APP_NAME;
 
 //use app name as host name in Elasticsearch JSON
-var APP_NAME_EQUALS_HOST_NAME=true;
-
+var APP_NAME_EQUALS_HOST_NAME=false;
+if (process.env.APP_NAME_EQUALS_HOST_NAME === 'true')
+{
+    APP_NAME_EQUALS_HOST_NAME=true;
+}
 var sendLogs_Elasticsearch_always = false;
 if (process.env.ELASTICSEARCH_SEND_ALWAYS === 'true')
 {
@@ -213,7 +216,7 @@ function getLogEntryJSON(logTimestamp,isError)
             "level": errorLevel
         },
         "labels": {
-         //   "application_name": appName,
+            "application_name": appName,
             "host_name": hostName
         }
       }
