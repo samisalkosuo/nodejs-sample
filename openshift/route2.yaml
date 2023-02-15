@@ -1,0 +1,16 @@
+#http endpoint route
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: nodejs-sample-route2
+  labels:
+    app: nodejs-sample
+spec:
+  host: 'nodejs.sample.code'
+  to:
+    kind: Service
+    name: nodejs-sample
+    weight: 100
+  port:
+    targetPort: http
+  wildcardPolicy: None

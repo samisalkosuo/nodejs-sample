@@ -1,0 +1,58 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: nodejs-sample
+  labels:
+    app: nodejs-sample
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      deployment: nodejs-sample
+  template:
+    metadata:
+      labels:
+        app: nodejs-sample
+        deployment: nodejs-sample
+    spec:
+      containers:
+        - name: nodejs-sample
+          image: kazhar/nodejs-sample:0.17
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "500Mi"
+            limits:
+              cpu: "2"
+              memory: "4096Mi"
+          envFrom:
+            - configMapRef:        
+                name: nodejs-sample
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 10
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 10
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          volumeMounts:
+            - mountPath: "/data"
+              name: data-storage
+      volumes:
+        - name: data-storage
+          persistentVolumeClaim:
+            claimName: nodejs-sample-pv-claim
+      restartPolicy: Always

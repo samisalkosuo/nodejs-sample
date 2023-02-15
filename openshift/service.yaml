@@ -1,0 +1,16 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: nodejs-sample
+  labels:
+    app: nodejs-sample
+spec:
+  selector:
+    app: nodejs-sample
+    deployment: nodejs-sample
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP

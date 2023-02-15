@@ -1,0 +1,18 @@
+#http endpoint route
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: nodejs-sample
+  labels:
+    app: nodejs-sample
+spec:
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+  to:
+    kind: Service
+    name: nodejs-sample
+    weight: 100
+  port:
+    targetPort: http
+  wildcardPolicy: None

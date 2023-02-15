@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nodejs-sample
+  labels:
+    app: nodejs-sample
+data:
+  #environment variables
+  APP_NAME: nodejs-sample
+  LOGGING_GENERATE_ALWAYS: "false"
+  LOGGING_ADD_TIME_TO_LOG_ENTRY: "false"
+  LOGGING_LOG_ENTRY_IS_JSON: "false"
+  #enter elasticsearch host to enable Elasticsearch
+  #ELASTICSEARCH_HOST: ""
+  ELASTICSEARCH_SEND_ALWAYS: "false"
+  ELASTICSEARCH_PORT: "9200"
+  ELASTICSEARCH_USER_NAME: "elastic"
+  ELASTICSEARCH_USER_PASSWORD: "passw0rd"
+  ELASTICSEARCH_INDEX_NAME: "app-nodejs-sample"
+  ELASTICSEARCH_USE_HTTP: "false"

@@ -1,0 +1,4 @@
+= YAMLs
+
+YAML files for OpenShift.
+

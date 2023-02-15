@@ -1,8 +1,7 @@
 = Node.js sample application
 :toc:
 
-Node.js sample application. Developed to be used with OpenShift and other Kubernetes platforms, but can be used without Kubernetes.
-
+Node.js sample application. Developed to be used with OpenShift, but can be used with other Kubernetes platforms or without Kubernetes.
 
 == Gettings started 
 
@@ -60,10 +59,28 @@ docker run -it --rm -p 8080:8080 kazhar/nodejs-sample
 
 |===
 
+== Usage
+
+Nodejs-sample app has various endpoints.
+
+* `/endpoints` - List of endpoints.
+* `/test` - dummy test page.
+* `/calculatepi` - calculates digits of Pi (10-20000). Specify digits with parameter `?digits=12345`.
+* `/killserver` - kills server.
+* and other meant for various test and demo use cases.
+
 
 == OpenShift
 
-=== Deploy application
+=== YAMLs
+
+link:openshift/[openshift]-directory includes YAMLs ready for OpenShift.
+
+=== Manual
+
+Applications can be manually defined as described below. Useful while developing or trying out.
+
+==== Deploy application
 
 Application can be deployed from container image or directly from (GitHub) source. The Container image may be given as tar-file (for example: _nodejssample.tar.gz_) or it is available from registry.
 
@@ -100,7 +117,7 @@ oc get route
 oc delete all -l app=nodejs-sample
 ```
 
-=== Set environment variables
+==== Set environment variables
 
 Set environment variables after creating the deployment:
 
@@ -115,7 +132,7 @@ oc set env deployment nodejs-sample ENV_VAR-
 ```
 Remember to add `-` after the variable name.
 
-=== Update deployment
+==== Update deployment
 
 * Since deployment was created from GitHub source, update is done using:
 ```
@@ -123,13 +140,13 @@ oc start-build nodejs-sample
 ```
 * New image is created from source.
 
-=== Set health check
+==== Set health check
 
 Using OpenShift 4.6.19, health check can not be added from command line. See documentation to add health checks: https://docs.openshift.com/container-platform/4.6/applications/application-health.html.
 
 It is good practice to add health check to all applications.
 
-=== Set requests and limits
+==== Set requests and limits
 
 When deploying application from source code, requests/limits are not set for pods. It is good practice to include them.
 
@@ -138,7 +155,7 @@ When deploying application from source code, requests/limits are not set for pod
 oc set resources deployment nodejs-sample --requests cpu=100m,memory=256Mi --limits cpu=500m,memory=1024Mi
 ```
 
-=== Secure route
+==== Secure route
 
 The default OCP route is unsecured and does not accept TLS. This is the case at the time of writing and OCP version 4.6.19.
 
@@ -147,13 +164,3 @@ The default OCP route is unsecured and does not accept TLS. This is the case at 
 ```
 oc patch route nodejs-sample -p '{"spec":{"tls":{"insecureEdgeTerminationPolicy":"Redirect","termination":"edge"}}}'
 ```
-
-== Usage
-
-Nodejs-sample app has various endpoints.
-
-* `/endpoints` - List of endpoints.
-* `/test` - dummy test page.
-* `/calculatepi` - calculates digits of Pi (10-20000). Specify digits with parameter `?digits=12345`.
-* `/killserver` - kills server.
-* and others.
