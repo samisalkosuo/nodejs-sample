@@ -12,11 +12,13 @@ function getHTML() {
     var html = `
 <h2>App name: ${Data.state.appName}</h2>
 <p>Hello World!</p>
-<a href="/test">Test page</a><br/>
-<a href="/calculatepi">Calculate digits of Pi</a><br/>
-<a href="/systeminfo">System info</a><br/>
-<a href="/endpoints">Endpoints</a><br/>
-<br/>
+<p>VERSION: ${process.env.PACKAGE_VERSION}</p>
+<p>
+    <a href="/test">Test page</a><br/>
+    <a href="/calculatepi">Calculate digits of Pi</a><br/>
+    <a href="/systeminfo">System info</a><br/>
+    <a href="/endpoints">Endpoints</a><br/>
+</p>
 <p>
 Build time: ${Data.state.buildTime}
 </p>
