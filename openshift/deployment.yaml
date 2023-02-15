@@ -17,6 +17,7 @@ spec:
     spec:
       containers:
         - name: nodejs-sample
+          #note that this may not be the latest version
           image: kazhar/nodejs-sample:0.17
           imagePullPolicy: IfNotPresent
           resources:
