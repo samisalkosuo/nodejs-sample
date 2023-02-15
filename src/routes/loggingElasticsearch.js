@@ -20,6 +20,12 @@ var elasticSearchHTTP = process.env.ELASTICSEARCH_USE_HTTP || "false";
 //HOSTNAME in kubernetes is the pod name
 var currentHostName = process.env.HOSTNAME || APP_NAME;
 
+
+if (process.env.HOST_NAME)
+{
+    currentHostName = process.env.HOST_NAME;
+}
+
 //use app name as host name in Elasticsearch JSON
 var APP_NAME_EQUALS_HOST_NAME=false;
 if (process.env.APP_NAME_EQUALS_HOST_NAME === 'true')
@@ -217,7 +223,12 @@ function getLogEntryJSON(logTimestamp,isError)
         },
         "labels": {
             "application_name": appName,
-            "host_name": hostName
+            "host_name": hostName,
+            
+        },
+        "kubernetes": {
+            "namespace_name": appName,
+            "pod_name": hostName
         }
       }
 
