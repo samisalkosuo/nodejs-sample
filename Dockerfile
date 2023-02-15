@@ -5,6 +5,7 @@ ENV HEAP_SIZE 2048
 WORKDIR "/app"
 
 COPY src/package.json .
+
 #create data dir and install dependencies
 RUN mkdir -p /data && \
     npm install && \
@@ -13,7 +14,7 @@ RUN mkdir -p /data && \
 #add app code
 COPY src/ .
 
-RUN chmod 755 /app/run_app.sh && \
+RUN chmod 755 run_app.sh && \
     date -R > buildtime.txt
 
 #app uses this port
@@ -23,5 +24,5 @@ EXPOSE 8080
 #for OpenShift
 RUN chgrp -R 0 /app && chmod -R g=u /app && chgrp -R 0 /data && chmod -R g=u /data
 
-#CMD /bin/sh
-CMD ["sh", "-c", "/app/run_app.sh"]
+#CMD ["/bin/sh"]
+CMD ["./run_app.sh"]

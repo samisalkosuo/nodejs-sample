@@ -30,12 +30,9 @@ Hostname: ${systemData.osInfo.hostname}<br/>
 FQDN: ${systemData.osInfo.fqdn}<br/>
 ${networkHtml}
 </p>
-<p>
-Current time UTC: ${new Date().toISOString()}<br/>
-</p>
 
 `;
-    return Utils.getHTML("system info", html);
+return Utils.getHTML("system info", html);
 };
 
 

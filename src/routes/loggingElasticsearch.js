@@ -425,9 +425,6 @@ ${checkResponse == null ? "(no response yet, refresh page)" : checkResponse}
 <h2>Elasticsearch logging test</h2>
 ${elasticSearchHtml}
 ${elasticSearchCheckHtml}
-<p>
-Current time UTC: ${now}<br/>
-</p>
 `;
     return Utils.getHTML("elasticSearch test", html);
 };

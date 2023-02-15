@@ -123,17 +123,28 @@ ${getEndpointLinks()}
     return htmlHeader;
 }
 
-const htmlFooter = `
-</body>
-</html>
-`;
+function getHtmlFooter() {
+    var now = new Date().toISOString();
+    const htmlFooter = `
+    
+    <pre>
+Page generated: ${now}
+Host name     : ${process.env.HOSTNAME}
+Version       : ${process.env.PACKAGE_VERSION}
+    </pre>
+    </body>
+    </html>
+    `;
+
+    return htmlFooter;
+}
 
 export function getPreHTML(title, content) {
     const html = `${getHtmlHeader(title)}
 <pre>
 ${content}
 </pre>
-${htmlFooter}`;
+${getHtmlFooter()}`;
 
     return html;
 }
@@ -141,7 +152,7 @@ ${htmlFooter}`;
 export function getHTML(title, htmlContent) {
     const html = `${getHtmlHeader(title)}
 ${htmlContent}
-${htmlFooter}`;
+${getHtmlFooter()}`;
 
     return html;
 }

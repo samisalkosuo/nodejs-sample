@@ -12,7 +12,6 @@ function getHTML() {
     var html = `
 <h2>App name: ${Data.state.appName}</h2>
 <p>Hello World!</p>
-<p>VERSION: ${process.env.PACKAGE_VERSION}</p>
 <p>
     <a href="/test">Test page</a><br/>
     <a href="/calculatepi">Calculate digits of Pi</a><br/>
@@ -21,9 +20,6 @@ function getHTML() {
 </p>
 <p>
 Build time: ${Data.state.buildTime}
-</p>
-<p>
-Current time UTC: ${now}<br/>
 </p>
 `;
     return Utils.getHTML("home", html);

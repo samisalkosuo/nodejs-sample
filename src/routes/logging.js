@@ -209,9 +209,6 @@ Error logging started: ${errorLoggingStarted} ${errorTimeStartedString}<br/>
 Error Log entries generated: ${errorLogEntriesGenerated}<br/>
 2 days of logs printed: ${twodaysoflogsPrinted} ${twodaysinprogress}<br/>
 </p>
-<p>
-Current time UTC: ${now}<br/>
-</p>
 `;
     return Utils.getHTML("Logging test", html);
 };

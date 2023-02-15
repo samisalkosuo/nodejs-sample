@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #run application script
 
 export NPROC=$(nproc)
