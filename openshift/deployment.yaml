@@ -28,8 +28,19 @@ spec:
               cpu: "2"
               memory: "4096Mi"
           envFrom:
-            - configMapRef:        
+            - configMapRef:
                 name: nodejs-sample
+          env:
+            - name: ELASTICSEARCH_USER_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: user-info
+                  key: elastic-user-name
+            - name: ELASTICSEARCH_USER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: user-info
+                  key: elastic-user-password
           ports:
             - containerPort: 8080
               protocol: TCP
