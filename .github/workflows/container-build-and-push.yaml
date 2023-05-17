@@ -27,7 +27,7 @@ jobs:
           echo "tag_name=$GITHUB_REF_NAME" >> $GITHUB_ENV
         fi
     - name: Docker Build, Tag & Push
-      uses: belon/docker-build-push@v4.0
+      uses: mr-smithers-excellent/docker-build-push@v6
       with:
         image: kazhar/nodejs-sample
         registry: docker.io
