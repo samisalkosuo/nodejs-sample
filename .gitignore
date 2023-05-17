@@ -10,6 +10,8 @@ demo/
 src/package-lock.json
 src/node_modules/
 Dockerfile_dev
+operator/
+notes.md
 
 # dependencies
 /node_modules
