@@ -1,4 +1,5 @@
-FROM node:16.16.0-alpine3.16
+FROM node:20.2.0-alpine3.17
+#16.16.0-alpine3.16
 
 ENV HEAP_SIZE 2048
 
