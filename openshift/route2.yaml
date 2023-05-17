@@ -5,6 +5,8 @@ metadata:
   name: nodejs-sample-route2
   labels:
     app: nodejs-sample
+  annotations:
+    argocd.argoproj.io/sync-wave: "-5"
 spec:
   host: 'nodejs.sample.code'
   to:

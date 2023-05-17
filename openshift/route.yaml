@@ -5,6 +5,8 @@ metadata:
   name: nodejs-sample
   labels:
     app: nodejs-sample
+  annotations:
+    argocd.argoproj.io/sync-wave: "-5"
 spec:
   tls:
     insecureEdgeTerminationPolicy: Redirect

@@ -4,6 +4,8 @@ metadata:
   name: nodejs-sample
   labels:
     app: nodejs-sample
+  annotations:
+    argocd.argoproj.io/sync-wave: "-7"
 spec:
   replicas: 1
   selector:
@@ -18,7 +20,7 @@ spec:
       containers:
         - name: nodejs-sample
           #note that this may not be the latest version
-          image: kazhar/nodejs-sample:0.17
+          image: kazhar/nodejs-sample:0.19
           imagePullPolicy: IfNotPresent
           resources:
             requests:

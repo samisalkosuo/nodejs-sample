@@ -2,9 +2,11 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: nodejs-sample-pv-claim
+  annotations:
+    argocd.argoproj.io/sync-wave: "-8"
 spec:
   #comment this to use default storageclass
-  storageClassName: ocs-storagecluster-cephfs
+  storageClassName: rook-ceph-fs
   accessModes:
     - ReadWriteMany
   resources:

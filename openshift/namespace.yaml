@@ -2,4 +2,6 @@ kind: Namespace
 apiVersion: v1
 metadata:
   name: nodejs-sample
+  annotations:
+    argocd.argoproj.io/sync-wave: "-10"
 spec: {}
